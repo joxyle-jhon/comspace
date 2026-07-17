@@ -1,62 +1,37 @@
-import type { Metadata } from 'next'
-import { Inter, Outfit, Geist } from 'next/font/google'
-import './globals.css'
-import { Providers } from './providers'
-import { Navbar } from '@/components/layout/Navbar'
-import { cn } from "@/lib/utils";
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+import type { Metadata } from "next";
+import { Inter, Outfit } from "next/font/google";
+import "./globals.css";
 
 const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-})
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+});
 
 const outfit = Outfit({
-  subsets: ['latin'],
-  variable: '--font-outfit',
-  display: 'swap',
-})
+  variable: "--font-outfit",
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800", "900"],
+});
 
 export const metadata: Metadata = {
-  title: {
-    default: 'Comspace — Find Your Perfect Space',
-    template: '%s | Comspace',
-  },
-  description:
-    'Discover unique homes, villas, and apartments for rent. Book your perfect stay with Comspace — the smarter way to travel.',
-  keywords: ['vacation rental', 'property booking', 'airbnb alternative', 'short term rental'],
-  openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: 'https://comspace.io',
-    siteName: 'Comspace',
-    title: 'Comspace — Find Your Perfect Space',
-    description: 'Discover unique homes, villas, and apartments for rent.',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Comspace — Find Your Perfect Space',
-  },
-  robots: { index: true, follow: true },
-}
+  title: "COMSPACE | Find Premium Work & Living Spaces",
+  description: "Discover curated co-working and co-living rentals designed for remote professionals, digital nomads, and traveling creators.",
+};
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode
-}) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="en" className={cn(inter.variable, outfit.variable, "font-sans", geist.variable)}>
-      <body className="font-body bg-stone-50 text-stone-950 antialiased">
-        <Providers>
-          <Navbar />
-          <main id="main-content" className="min-h-screen">
-            {children}
-          </main>
-        </Providers>
+    <html
+      lang="en"
+      className={`${inter.variable} ${outfit.variable} h-full antialiased`}
+    >
+      <body className="min-h-full bg-slate-50 text-slate-900 font-sans flex flex-col">
+        {children}
       </body>
     </html>
-  )
+  );
 }

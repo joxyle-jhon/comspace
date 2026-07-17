@@ -1,182 +1,128 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
-import { Search, MapPin, Calendar, Users } from 'lucide-react'
+import { Search, MapPin } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import DateRangePicker from './DateRangePicker'
+import GuestSelector from './GuestSelector'
 
 interface SearchBarProps {
   className?: string
-  compact?: boolean
+  onSearch?: (params: any) => void
 }
 
-const fieldInputClass =
-  'h-auto border-0 bg-transparent px-0 py-0 shadow-none focus-visible:ring-0 md:text-sm'
-
-export function SearchBar({ className, compact = false }: SearchBarProps) {
+export default function SearchBar({ className, onSearch }: SearchBarProps) {
   const router = useRouter()
   const [location, setLocation] = useState('')
-  const [checkIn, setCheckIn] = useState('')
-  const [checkOut, setCheckOut] = useState('')
-  const [guests, setGuests] = useState(1)
+  const [dateRange, setDateRange] = useState<{ startDate: Date | null; endDate: Date | null }>({
+    startDate: null,
+    endDate: null,
+  })
+  
+  // Guest counts
+  const [adults, setAdults] = useState(1)
+  const [kids, setKids] = useState(0)
+  const [pets, setPets] = useState(0)
+
   const [activeField, setActiveField] = useState<string | null>(null)
 
-  const handleSearch = useCallback(() => {
-    const params = new URLSearchParams()
-    if (location) params.set('location', location)
-    if (checkIn) params.set('check_in', checkIn)
-    if (checkOut) params.set('check_out', checkOut)
-    if (guests > 1) params.set('guests', String(guests))
-    router.push(`/properties?${params.toString()}`)
-  }, [location, checkIn, checkOut, guests, router])
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') handleSearch()
+  const formatDateString = (date: Date | null) => {
+    if (!date) return ''
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
   }
 
-  if (compact) {
-    return (
-      <Button
-        type="button"
-        variant="outline"
-        onClick={() => router.push('/properties')}
-        className="h-auto rounded-full px-4 py-2.5 text-sm font-normal text-stone-500 shadow-sm hover:shadow-md"
-        aria-label="Open search"
-      >
-        <Search className="w-4 h-4 text-primary" aria-hidden="true" />
-        Search destinations…
-      </Button>
-    )
+  const handleSearch = () => {
+    const params = new URLSearchParams()
+    const checkInStr = formatDateString(dateRange.startDate)
+    const checkOutStr = formatDateString(dateRange.endDate)
+    const totalGuests = adults + kids + pets
+
+    if (location) params.set('location', location)
+    if (checkInStr) params.set('check_in', checkInStr)
+    if (checkOutStr) params.set('check_out', checkOutStr)
+    if (totalGuests > 1) params.set('guests', String(totalGuests))
+
+    if (onSearch) {
+      onSearch({
+        location,
+        checkIn: checkInStr,
+        checkOut: checkOutStr,
+        guests: totalGuests,
+      })
+    } else {
+      router.push(`/properties?${params.toString()}`)
+    }
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.1 }}
+    <div
       className={cn(
-        'flex flex-col md:flex-row items-stretch bg-white rounded-2xl shadow-booking overflow-hidden border border-stone-100',
+        'w-full bg-white rounded-3xl md:rounded-full border border-slate-200/80 shadow-2xl p-3 flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-0 relative z-[10000]',
         className
       )}
       role="search"
-      aria-label="Property search"
     >
+      {/* WHERE field */}
       <div
         className={cn(
-          'flex items-center gap-3 px-5 py-4 flex-1 border-b md:border-b-0 md:border-r border-stone-100 cursor-text',
-          activeField === 'location' && 'bg-stone-50'
+          'flex-1 flex items-center gap-3 px-5 py-2.5 rounded-2xl md:rounded-l-full cursor-pointer hover:bg-slate-50 transition-colors group',
+          activeField === 'location' && 'bg-slate-50'
         )}
-        onClick={() => document.getElementById('search-location')?.focus()}
+        onClick={() => {
+          setActiveField('location')
+          document.getElementById('search-location')?.focus()
+        }}
       >
-        <MapPin className="w-5 h-5 text-primary shrink-0" aria-hidden="true" />
-        <div className="flex-1">
-          <Label htmlFor="search-location" className="text-xs font-semibold text-stone-700 mb-0.5">
-            Where
-          </Label>
-          <Input
+        <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-brand-light group-hover:text-brand-primary transition-colors shrink-0">
+          <MapPin className="w-5 h-5" />
+        </div>
+        <div className="flex-1 min-w-0 flex flex-col text-left">
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-0.5">
+            WHERE
+          </span>
+          <input
             id="search-location"
             type="text"
-            placeholder="Search destinations"
+            placeholder="Anywhere"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             onFocus={() => setActiveField('location')}
-            onBlur={() => setActiveField(null)}
-            onKeyDown={handleKeyDown}
-            className={fieldInputClass}
+            onBlur={() => setTimeout(() => setActiveField(null), 200)}
+            className="w-full border-0 bg-transparent p-0 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:ring-0 focus:outline-none"
           />
         </div>
       </div>
 
-      <div
-        className={cn(
-          'flex items-center gap-3 px-5 py-4 flex-1 border-b md:border-b-0 md:border-r border-stone-100 cursor-text',
-          activeField === 'checkin' && 'bg-stone-50'
-        )}
+      <div className="hidden md:block h-8 w-px bg-slate-200" />
+
+      {/* DATE RANGE field */}
+      <DateRangePicker value={dateRange} onChange={setDateRange} />
+
+      <div className="hidden md:block h-8 w-px bg-slate-200" />
+
+      {/* WHO field */}
+      <GuestSelector
+        adults={adults}
+        setAdults={setAdults}
+        kids={kids}
+        setKids={setKids}
+        pets={pets}
+        setPets={setPets}
+      />
+
+      {/* Search button */}
+      <button
+        onClick={handleSearch}
+        className="gradient-bg text-white h-14 w-full md:w-14 rounded-2xl md:rounded-full flex items-center justify-center hover:shadow-lg hover:shadow-brand-primary/30 transition-all duration-300 transform hover:scale-[1.03] active:scale-[0.97] shrink-0 gap-2 md:gap-0 font-bold"
+        aria-label="Search properties"
       >
-        <Calendar className="w-5 h-5 text-primary shrink-0" aria-hidden="true" />
-        <div className="flex-1">
-          <Label htmlFor="search-checkin" className="text-xs font-semibold text-stone-700 mb-0.5">
-            Check in
-          </Label>
-          <Input
-            id="search-checkin"
-            type="date"
-            value={checkIn}
-            min={new Date().toISOString().split('T')[0]}
-            onChange={(e) => setCheckIn(e.target.value)}
-            onFocus={() => setActiveField('checkin')}
-            onBlur={() => setActiveField(null)}
-            className={cn(fieldInputClass, '[color-scheme:light]')}
-          />
-        </div>
-      </div>
-
-      <div
-        className={cn(
-          'flex items-center gap-3 px-5 py-4 flex-1 border-b md:border-b-0 md:border-r border-stone-100 cursor-text',
-          activeField === 'checkout' && 'bg-stone-50'
-        )}
-      >
-        <Calendar className="w-5 h-5 text-stone-400 shrink-0" aria-hidden="true" />
-        <div className="flex-1">
-          <Label htmlFor="search-checkout" className="text-xs font-semibold text-stone-700 mb-0.5">
-            Check out
-          </Label>
-          <Input
-            id="search-checkout"
-            type="date"
-            value={checkOut}
-            min={checkIn || new Date().toISOString().split('T')[0]}
-            onChange={(e) => setCheckOut(e.target.value)}
-            onFocus={() => setActiveField('checkout')}
-            onBlur={() => setActiveField(null)}
-            className={cn(fieldInputClass, '[color-scheme:light]')}
-          />
-        </div>
-      </div>
-
-      <div
-        className={cn(
-          'flex items-center gap-3 px-5 py-4 flex-1',
-          activeField === 'guests' && 'bg-stone-50'
-        )}
-      >
-        <Users className="w-5 h-5 text-stone-400 shrink-0" aria-hidden="true" />
-        <div className="flex-1">
-          <Label htmlFor="search-guests" className="text-xs font-semibold text-stone-700 mb-0.5">
-            Guests
-          </Label>
-          <Input
-            id="search-guests"
-            type="number"
-            min={1}
-            max={20}
-            value={guests}
-            onChange={(e) => setGuests(Math.max(1, parseInt(e.target.value) || 1))}
-            onFocus={() => setActiveField('guests')}
-            onBlur={() => setActiveField(null)}
-            className={fieldInputClass}
-          />
-        </div>
-      </div>
-
-      <div className="flex items-center p-3">
-        <Button
-          type="button"
-          id="search-submit"
-          size="xl"
-          onClick={handleSearch}
-          className="w-full md:w-auto whitespace-nowrap"
-          aria-label="Search properties"
-        >
-          <Search className="w-4 h-4" aria-hidden="true" />
-          Search
-        </Button>
-      </div>
-    </motion.div>
+        <Search className="w-5 h-5" />
+        <span className="md:hidden">Search Spaces</span>
+      </button>
+    </div>
   )
 }

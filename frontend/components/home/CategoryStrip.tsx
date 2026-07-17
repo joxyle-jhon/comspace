@@ -1,47 +1,44 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import Link from 'next/link'
 import { Building2, Home, TreePine, Waves, Mountain, Star } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 const CATEGORIES = [
-  { label: 'Apartments', icon: Building2, type: 'apartment', color: 'bg-teal-50 text-teal-600' },
-  { label: 'Houses', icon: Home, type: 'house', color: 'bg-amber-50 text-amber-600' },
-  { label: 'Cabins', icon: TreePine, type: 'cabin', color: 'bg-green-50 text-green-600' },
-  { label: 'Villas', icon: Star, type: 'villa', color: 'bg-purple-50 text-purple-600' },
-  { label: 'Studios', icon: Waves, type: 'studio', color: 'bg-teal-50 text-teal-600' },
-  { label: 'Lofts', icon: Mountain, type: 'loft', color: 'bg-stone-100 text-stone-600' },
+  { label: 'Apartments', icon: Building2, type: 'apartment' },
+  { label: 'Houses', icon: Home, type: 'house' },
+  { label: 'Cabins', icon: TreePine, type: 'cabin' },
+  { label: 'Villas', icon: Star, type: 'villa' },
+  { label: 'Studios', icon: Waves, type: 'studio' },
+  { label: 'Lofts', icon: Mountain, type: 'loft' },
 ] as const
 
-export function CategoryStrip() {
+interface CategoryStripProps {
+  activeCategory: string | null
+  onSelectCategory: (type: string | null) => void
+}
+
+export default function CategoryStrip({ activeCategory, onSelectCategory }: CategoryStripProps) {
   return (
-    <section aria-labelledby="category-heading" className="py-12 bg-white border-b border-stone-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 id="category-heading" className="sr-only">Browse by category</h2>
-        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide snap-x">
-          {CATEGORIES.map(({ label, icon: Icon, type, color }, i) => (
-            <motion.div
-              key={type}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="snap-start shrink-0"
-            >
-              <Link
-                href={`/properties?type=${type}`}
-                className="flex flex-col items-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-xl p-1"
-              >
-                <div className={`w-16 h-16 rounded-2xl ${color} flex items-center justify-center transition-transform group-hover:scale-110 group-hover:shadow-md`}>
-                  <Icon className="w-7 h-7" aria-hidden="true" />
-                </div>
-                <span className="text-xs font-medium text-stone-600 group-hover:text-stone-900 transition-colors whitespace-nowrap">
-                  {label}
-                </span>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
+    <div className="flex gap-3 overflow-x-auto pt-2 pb-4 px-1 scrollbar-none justify-start mt-4 mb-6 relative z-[2]">
+      {CATEGORIES.map(({ label, icon: Icon, type }) => {
+        const isActive = activeCategory === type
+        return (
+          <button
+            key={type}
+            onClick={() => onSelectCategory(isActive ? null : type)}
+            aria-pressed={isActive}
+            className={cn(
+              'flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition-all shrink-0 border duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 overflow-visible',
+              isActive
+                ? 'bg-brand-primary text-white border-transparent shadow-[0_2px_12px_rgba(255,103,0,0.4)] ring-2 ring-brand-primary ring-offset-2'
+                : 'bg-transparent border-brand-light text-slate-700 hover:bg-brand-tertiary hover:text-slate-900'
+            )}
+          >
+            <Icon className="w-4 h-4 shrink-0" />
+            <span>{label}</span>
+          </button>
+        )
+      })}
+    </div>
   )
 }
