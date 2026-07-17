@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+@theme {
+  --font-heading: var(--font-outfit);
+  --font-body: var(--font-inter);
+}
+
+/* ─── CSS Custom Properties ─────────────────────────────────────────── */
+:root {
+  --brand-500: #ff5722;
+  --brand-600: #e84c1a;
+  --stone-50:  #faf9f7;
+  --stone-950: #271f1a;
+  --radius-card: 1rem;
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Base Reset ─────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-body), system-ui, sans-serif;
+  background-color: #faf9f7;
+  color: #271f1a;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ─── Typography ─────────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading), system-ui, sans-serif;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: #cfc2b0;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: #b3a08c; }
+
+/* ─── Focus Ring ─────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--brand-500);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Utility Classes ────────────────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg, #e4dbd0 25%, #f2ede7 50%, #e4dbd0 75%);
+  background-size: 200% 100%;
+  animation: skeleton 1.6s ease-in-out infinite;
+  border-radius: 0.5rem;
+}
+
+@keyframes skeleton {
+  0%, 100% { background-position: 200% 0; }
+  50%       { background-position: -200% 0; }
+}
+
+.card-hover {
+  transition: box-shadow var(--transition-smooth), transform var(--transition-smooth);
+}
+.card-hover:hover {
+  box-shadow: 0 8px 24px -4px rgba(39,31,26,0.12), 0 16px 32px -8px rgba(39,31,26,0.08);
+  transform: translateY(-2px);
+}
+
+/* ─── Gradient Text ─────────────────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--brand-500) 0%, #ff8c66 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Glass effect ──────────────────────────────────────────────────── */
+.glass {
+  background: rgba(250, 249, 247, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(228, 219, 208, 0.6);
+}
+
+/* ─── Bottom Sheet (mobile booking widget) ──────────────────────────── */
+@media (max-width: 768px) {
+  .booking-widget-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 1.5rem 1.5rem 0 0;
+    box-shadow: 0 -8px 32px rgba(39,31,26,0.12);
+    z-index: 50;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+/* ─── Image Gallery ─────────────────────────────────────────────────── */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 0.5rem;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+.gallery-grid > :first-child { grid-row: 1 / 3; }
