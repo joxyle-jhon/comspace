@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PropertyImageResource;
 use App\Http\Resources\PropertyResource;
 use App\Models\Property;
+use App\Models\PropertyImage;
+use App\Services\SupabaseStorageService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Validation\ValidationException;
 
 class PropertyController extends Controller
 {
@@ -186,6 +190,63 @@ class PropertyController extends Controller
             'is_published' => $property->is_published,
             'message' => $property->is_published ? 'Property published.' : 'Property unpublished.',
         ]);
+    }
+
+    /**
+     * Upload property images to Supabase Storage (host only, max 10 total).
+     */
+    public function uploadImages(
+        Request $request,
+        Property $property,
+        SupabaseStorageService $storage
+    ): JsonResponse {
+        $this->authorize('update', $property);
+
+        $data = $request->validate([
+            'images' => ['required', 'array', 'min:1'],
+            'images.*' => ['file', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'captions' => ['sometimes', 'array'],
+            'captions.*' => ['nullable', 'string', 'max:255'],
+            'cover_index' => ['sometimes', 'integer', 'min:0'],
+        ]);
+
+        $existingCount = $property->images()->count();
+        $incomingCount = count($data['images']);
+
+        if ($existingCount + $incomingCount > 10) {
+            throw ValidationException::withMessages([
+                'images' => 'A property may have at most 10 images.',
+            ]);
+        }
+
+        $startOrder = (int) $property->images()->max('sort_order');
+        $created = [];
+        $coverIndex = $data['cover_index'] ?? null;
+        $hasCover = $property->images()->where('is_cover', true)->exists();
+
+        foreach ($data['images'] as $index => $file) {
+            $url = $storage->upload($file, "properties/{$property->id}");
+
+            $isCover = false;
+            if ($coverIndex !== null && (int) $coverIndex === $index) {
+                $property->images()->update(['is_cover' => false]);
+                $isCover = true;
+            } elseif (!$hasCover && $index === 0 && $existingCount === 0) {
+                $isCover = true;
+            }
+
+            $created[] = PropertyImage::create([
+                'property_id' => $property->id,
+                'url' => $url,
+                'caption' => $data['captions'][$index] ?? null,
+                'sort_order' => $startOrder + $index + 1,
+                'is_cover' => $isCover,
+            ]);
+        }
+
+        return response()->json([
+            'data' => PropertyImageResource::collection(collect($created)),
+        ], 201);
     }
 
     /**

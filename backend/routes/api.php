@@ -37,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Properties — host actions
     Route::post('/properties', [PropertyController::class, 'store']);
     Route::put('/properties/{property}', [PropertyController::class, 'update']);
+    Route::post('/properties/{property}/images', [PropertyController::class, 'uploadImages']);
     Route::patch('/properties/{property}/publish', [PropertyController::class, 'publish']);
     Route::delete('/properties/{property}', [PropertyController::class, 'destroy']);
 
