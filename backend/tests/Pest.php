@@ -15,3 +15,20 @@ uses(
 | degrade gracefully on SQLite; Postgres still uses FOR NO KEY UPDATE.
 |
 */
+
+/**
+ * Build a forever-valid stay window relative to now.
+ *
+ * @return array{check_in: string, check_out: string, nights: int}
+ */
+function stayWindow(int $nights = 4, int $startOffsetDays = 60): array
+{
+    $checkIn = now()->addDays($startOffsetDays)->startOfDay();
+    $checkOut = $checkIn->copy()->addDays($nights);
+
+    return [
+        'check_in' => $checkIn->toDateString(),
+        'check_out' => $checkOut->toDateString(),
+        'nights' => $nights,
+    ];
+}
