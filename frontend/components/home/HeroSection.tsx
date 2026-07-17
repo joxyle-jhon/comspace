@@ -1,9 +1,11 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { SearchBar } from '@/components/search/SearchBar'
 
 export function HeroSection() {
+  const prefersReducedMotion = useReducedMotion()
+
   return (
     <section
       aria-labelledby="hero-heading"
@@ -32,8 +34,8 @@ export function HeroSection() {
             key={i}
             className="absolute w-64 h-64 rounded-full bg-brand-500/10 blur-3xl"
             style={{ left: `${10 + i * 16}%`, top: `${20 + (i % 3) * 20}%` }}
-            animate={{ y: [0, -20, 0], opacity: [0.3, 0.6, 0.3] }}
-            transition={{ duration: 4 + i, repeat: Infinity, delay: i * 0.7 }}
+            animate={prefersReducedMotion ? undefined : { y: [0, -20, 0], opacity: [0.3, 0.6, 0.3] }}
+            transition={prefersReducedMotion ? undefined : { duration: 4 + i, repeat: Infinity, delay: i * 0.7 }}
           />
         ))}
       </div>
@@ -107,8 +109,8 @@ export function HeroSection() {
       {/* Scroll indicator */}
       <motion.div
         className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        animate={{ y: [0, 8, 0] }}
-        transition={{ repeat: Infinity, duration: 2 }}
+        animate={prefersReducedMotion ? undefined : { y: [0, 8, 0] }}
+        transition={prefersReducedMotion ? undefined : { repeat: Infinity, duration: 2 }}
         aria-hidden="true"
       >
         <div className="w-6 h-10 rounded-full border-2 border-white/40 flex items-start justify-center pt-2">

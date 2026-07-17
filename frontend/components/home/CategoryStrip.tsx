@@ -9,8 +9,8 @@ const CATEGORIES = [
   { label: 'Houses', icon: Home, type: 'house', color: 'bg-amber-50 text-amber-600' },
   { label: 'Cabins', icon: TreePine, type: 'cabin', color: 'bg-green-50 text-green-600' },
   { label: 'Villas', icon: Star, type: 'villa', color: 'bg-purple-50 text-purple-600' },
-  { label: 'Beachfront', icon: Waves, type: 'studio', color: 'bg-blue-50 text-blue-600' },
-  { label: 'Mountain', icon: Mountain, type: 'loft', color: 'bg-stone-100 text-stone-600' },
+  { label: 'Studios', icon: Waves, type: 'studio', color: 'bg-teal-50 text-teal-600' },
+  { label: 'Lofts', icon: Mountain, type: 'loft', color: 'bg-stone-100 text-stone-600' },
 ] as const
 
 export function CategoryStrip() {
