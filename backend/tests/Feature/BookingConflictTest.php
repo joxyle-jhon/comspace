@@ -20,12 +20,14 @@ describe('BookingService conflict prevention', function () {
             'instant_book' => true,
         ]);
 
+        $stay = stayWindow(nights: 4);
+
         $service = app(BookingService::class);
         $booking = $service->createBooking(
             guest: $guest,
             property: $property,
-            checkIn: '2026-12-01',
-            checkOut: '2026-12-05',
+            checkIn: $stay['check_in'],
+            checkOut: $stay['check_out'],
             guestCount: 2
         );
 
@@ -50,11 +52,15 @@ describe('BookingService conflict prevention', function () {
             'instant_book' => true,
         ]);
 
+        $first = stayWindow(nights: 4);
+        $overlapIn = now()->parse($first['check_in'])->addDays(2)->toDateString();
+        $overlapOut = now()->parse($first['check_in'])->addDays(7)->toDateString();
+
         $service = app(BookingService::class);
 
-        $service->createBooking($guest1, $property, '2026-12-01', '2026-12-05', 2);
+        $service->createBooking($guest1, $property, $first['check_in'], $first['check_out'], 2);
 
-        expect(fn () => $service->createBooking($guest2, $property, '2026-12-03', '2026-12-08', 2))
+        expect(fn () => $service->createBooking($guest2, $property, $overlapIn, $overlapOut, 2))
             ->toThrow(\Illuminate\Validation\ValidationException::class);
     });
 
@@ -71,10 +77,20 @@ describe('BookingService conflict prevention', function () {
             'instant_book' => true,
         ]);
 
-        $service = app(BookingService::class);
-        $service->createBooking($guest1, $property, '2026-12-01', '2026-12-05', 2);
+        $first = stayWindow(nights: 4);
+        $adjacentIn = $first['check_out'];
+        $adjacentOut = now()->parse($adjacentIn)->addDays(3)->toDateString();
 
-        $booking2 = $service->createBooking($guest2, $property, '2026-12-05', '2026-12-08', 2);
+        $service = app(BookingService::class);
+        $service->createBooking($guest1, $property, $first['check_in'], $first['check_out'], 2);
+
+        $booking2 = $service->createBooking(
+            $guest2,
+            $property,
+            $adjacentIn,
+            $adjacentOut,
+            2
+        );
 
         expect($booking2)->toBeInstanceOf(Booking::class);
     });
@@ -90,8 +106,10 @@ describe('BookingService conflict prevention', function () {
             'max_guests' => 4,
         ]);
 
+        $tooShort = stayWindow(nights: 1);
+
         expect(fn () => app(BookingService::class)->createBooking(
-            $guest, $property, '2026-12-01', '2026-12-02', 1
+            $guest, $property, $tooShort['check_in'], $tooShort['check_out'], 1
         ))->toThrow(\Illuminate\Validation\ValidationException::class);
     });
 
@@ -106,8 +124,10 @@ describe('BookingService conflict prevention', function () {
             'max_guests' => 2,
         ]);
 
+        $stay = stayWindow(nights: 4);
+
         expect(fn () => app(BookingService::class)->createBooking(
-            $guest, $property, '2026-12-01', '2026-12-05', 10
+            $guest, $property, $stay['check_in'], $stay['check_out'], 10
         ))->toThrow(\Illuminate\Validation\ValidationException::class);
     });
 
@@ -120,8 +140,10 @@ describe('BookingService conflict prevention', function () {
             'max_nights' => 30,
         ]);
 
+        $stay = stayWindow(nights: 3);
+
         $pricing = app(BookingService::class)->calculatePrice(
-            $property, '2026-12-01', '2026-12-04' // 3 nights
+            $property, $stay['check_in'], $stay['check_out']
         );
 
         expect($pricing['nights'])->toBe(3)
@@ -144,12 +166,26 @@ describe('BookingService conflict prevention', function () {
             'instant_book' => true,
         ]);
 
+        $stay = stayWindow(nights: 4);
+
         $service = app(BookingService::class);
-        $booking = $service->createBooking($guest1, $property, '2026-12-01', '2026-12-05', 2);
+        $booking = $service->createBooking(
+            $guest1,
+            $property,
+            $stay['check_in'],
+            $stay['check_out'],
+            2
+        );
 
         $booking->update(['status' => 'cancelled']);
 
-        $booking2 = $service->createBooking($guest2, $property, '2026-12-01', '2026-12-05', 2);
+        $booking2 = $service->createBooking(
+            $guest2,
+            $property,
+            $stay['check_in'],
+            $stay['check_out'],
+            2
+        );
         expect($booking2)->toBeInstanceOf(Booking::class);
     });
 });

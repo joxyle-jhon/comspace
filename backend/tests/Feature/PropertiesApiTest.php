@@ -42,9 +42,11 @@ describe('Properties API (frontend contract)', function () {
             'is_published' => true,
         ]);
 
+        $stay = stayWindow(nights: 3);
+
         $response = $this->getJson("/api/properties/{$property->id}/price-preview?".http_build_query([
-            'check_in' => '2026-12-01',
-            'check_out' => '2026-12-04',
+            'check_in' => $stay['check_in'],
+            'check_out' => $stay['check_out'],
         ]));
 
         $response->assertOk()
