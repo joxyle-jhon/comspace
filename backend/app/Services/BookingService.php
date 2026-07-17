@@ -67,17 +67,26 @@ class BookingService
         }
 
         return DB::transaction(function () use ($guest, $property, $checkIn, $checkOut, $guestCount, $guestNote) {
-            // Row-level lock on the property to serialize concurrent booking attempts
-            DB::statement(
-                'SELECT id FROM properties WHERE id = ? FOR NO KEY UPDATE',
-                [$property->id]
-            );
+            // Normalize to Y-m-d so SQLite datetime storage does not break adjacent-day comparisons.
+            $checkIn = now()->parse($checkIn)->toDateString();
+            $checkOut = now()->parse($checkOut)->toDateString();
+
+            // Serialize concurrent booking attempts on the same property.
+            // Postgres: FOR NO KEY UPDATE. SQLite/tests: Eloquent lockForUpdate().
+            if (DB::getDriverName() === 'pgsql') {
+                DB::statement(
+                    'SELECT id FROM properties WHERE id = ? FOR NO KEY UPDATE',
+                    [$property->id]
+                );
+            } else {
+                Property::query()->whereKey($property->id)->lockForUpdate()->first();
+            }
 
             // Check for overlapping confirmed/pending bookings
             $conflict = Booking::where('property_id', $property->id)
                 ->whereIn('status', ['confirmed', 'pending'])
-                ->where('check_in', '<', $checkOut)
-                ->where('check_out', '>', $checkIn)
+                ->whereDate('check_in', '<', $checkOut)
+                ->whereDate('check_out', '>', $checkIn)
                 ->lockForUpdate()
                 ->exists();
 
@@ -89,8 +98,8 @@ class BookingService
 
             // Also check host-blocked dates
             $blocked = $property->availabilityBlocks()
-                ->where('blocked_from', '<', $checkOut)
-                ->where('blocked_to', '>', $checkIn)
+                ->whereDate('blocked_from', '<', $checkOut)
+                ->whereDate('blocked_to', '>', $checkIn)
                 ->exists();
 
             if ($blocked) {
