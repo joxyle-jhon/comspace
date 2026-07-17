@@ -1,173 +1,155 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useState, useEffect } from 'react'
-import { useAuthStore } from '@/store/auth'
-import { Menu, Search, User, LogOut, LayoutDashboard, PlusSquare } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { User, LogOut, PlusCircle, Home, Menu, Shield } from 'lucide-react'
+import { useAuthStore } from '@/store/useAuthStore'
 import { cn } from '@/lib/utils'
-import { buttonVariants } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 
-export function Navbar() {
-  const pathname = usePathname()
-  const { user, isAuthenticated, clearAuth } = useAuthStore()
+export default function Navbar() {
+  const router = useRouter()
+  const { user, logout, initialize } = useAuthStore()
   const [scrolled, setScrolled] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 12)
-    window.addEventListener('scroll', handleScroll, { passive: true })
+    initialize()
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+    window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  const isHome = pathname === '/'
-  const onDarkHero = isHome && !scrolled
+  }, [initialize])
 
   return (
     <nav
-      role="navigation"
-      aria-label="Main navigation"
       className={cn(
-        'fixed top-0 left-0 right-0 z-40 transition-all duration-300',
-        scrolled || !isHome
-          ? 'glass border-b border-stone-200/60 shadow-sm'
-          : 'bg-transparent border-b border-transparent'
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-transparent',
+        scrolled
+          ? 'glass shadow-md py-3 border-slate-200/50'
+          : 'bg-white/40 backdrop-blur-[2px] py-4'
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-
-          <Link
-            href="/"
-            className="flex items-center gap-2 group"
-            aria-label="Comspace home"
-          >
-            <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center">
-              <span className="text-white font-heading font-bold text-sm">C</span>
-            </div>
-            <span className={cn(
-              'font-heading font-bold text-xl tracking-tight transition-colors',
-              onDarkHero ? 'text-white' : 'text-stone-900'
-            )}>
-              Comspace
+        <div className="flex items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2 group focus:outline-none">
+            <span className="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center text-white shadow-md shadow-brand-primary/20 transform group-hover:scale-105 transition-transform duration-300">
+              <div className="w-3.5 h-3.5 bg-white transform rotate-45" />
+            </span>
+            <span className="font-heading font-black text-xl tracking-tight text-slate-900 group-hover:opacity-80 transition-opacity">
+              COM<span className="gradient-text">SPACE</span>
             </span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-1">
-            {[
-              { href: '/properties', label: 'Browse' },
-              { href: '/properties?type=villa', label: 'Villas' },
-              { href: '/properties?type=cabin', label: 'Cabins' },
-              { href: '/properties?instant_book=true', label: 'Instant Book' },
-            ].map(({ href, label }) => (
+          {/* Navigation Links */}
+          <div className="hidden md:flex items-center gap-8">
+            <Link
+              href="/"
+              className="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
+            >
+              Explore
+            </Link>
+            <Link
+              href="/#why-heading"
+              className="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
+            >
+              Why Us
+            </Link>
+            {user?.role === 'host' ? (
               <Link
-                key={href}
-                href={href}
-                className={cn(
-                  buttonVariants({ variant: 'ghost', size: 'sm' }),
-                  onDarkHero
-                    ? 'text-white/80 hover:text-white hover:bg-white/10'
-                    : 'text-stone-600 hover:text-stone-900'
-                )}
+                href="/host/properties"
+                className="text-sm font-semibold text-brand-primary hover:text-brand-secondary transition-colors flex items-center gap-1.5"
               >
-                {label}
+                <PlusCircle className="w-4 h-4" />
+                Manage Spaces
               </Link>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-2">
-            {isAuthenticated && user?.role === 'guest' && (
+            ) : (
               <Link
-                href="/host/become"
-                className={cn(
-                  buttonVariants({ variant: 'ghost', size: 'sm' }),
-                  'hidden md:inline-flex',
-                  onDarkHero
-                    ? 'text-white/80 hover:text-white hover:bg-white/10'
-                    : 'text-stone-700'
-                )}
+                href="/#host-banner"
+                className="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
               >
-                Become a host
+                Host your space
               </Link>
             )}
+          </div>
 
-            {isAuthenticated ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  className={cn(
-                    'flex items-center gap-2 rounded-full border border-stone-200 bg-white px-3 py-1.5 shadow-sm',
-                    'hover:shadow-md transition-all outline-none focus-visible:ring-3 focus-visible:ring-ring/50'
-                  )}
-                  aria-label="Open account menu"
+          {/* Auth Controls */}
+          <div className="flex items-center gap-4">
+            {user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 shadow-sm transition-all focus:outline-none"
                 >
-                  <Menu className="w-4 h-4 text-stone-600" aria-hidden="true" />
-                  <Avatar size="sm" className="size-7 bg-brand-500 after:border-0">
-                    <AvatarFallback className="bg-brand-500 text-white text-xs font-bold">
-                      {user?.name?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                </DropdownMenuTrigger>
+                  <Menu className="w-4 h-4 text-slate-500" />
+                  <div className="w-7 h-7 rounded-full bg-brand-light flex items-center justify-center text-brand-primary font-bold text-xs">
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                </button>
 
-                <DropdownMenuContent align="end" className="w-52 rounded-2xl p-1">
-                  <DropdownMenuLabel className="px-3 py-2 font-normal">
-                    <p className="text-sm font-semibold text-stone-900">{user?.name}</p>
-                    <p className="text-xs text-muted-foreground capitalize">{user?.role}</p>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {user?.role === 'host' && (
-                    <>
-                      <DropdownMenuItem render={<Link href="/host/dashboard" />}>
-                        <LayoutDashboard className="w-4 h-4" />
-                        Dashboard
-                      </DropdownMenuItem>
-                      <DropdownMenuItem render={<Link href="/host/properties/new" />}>
-                        <PlusSquare className="w-4 h-4" />
-                        Add Property
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                  <DropdownMenuItem render={<Link href="/bookings" />}>
-                    <Search className="w-4 h-4" />
-                    My Bookings
-                  </DropdownMenuItem>
-                  <DropdownMenuItem render={<Link href="/profile" />}>
-                    <User className="w-4 h-4" />
-                    Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    variant="destructive"
-                    onClick={clearAuth}
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Sign out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                {dropdownOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setDropdownOpen(false)}
+                    />
+                    <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-slate-100 bg-white shadow-xl py-2 z-20 animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="px-4 py-2.5 border-b border-slate-100">
+                        <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Signed in as</p>
+                        <p className="font-semibold text-slate-800 truncate text-sm">{user.name}</p>
+                        <span className="inline-flex items-center gap-1 mt-1 text-[10px] font-bold uppercase tracking-wider text-brand-primary px-1.5 py-0.5 rounded bg-brand-light/45">
+                          {user.role}
+                        </span>
+                      </div>
+
+                      <Link
+                        href="/bookings"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        <Shield className="w-4 h-4" />
+                        My Bookings
+                      </Link>
+
+                      {user.role === 'host' && (
+                        <Link
+                          href="/host/properties"
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                          onClick={() => setDropdownOpen(false)}
+                        >
+                          <PlusCircle className="w-4 h-4" />
+                          Manage Properties
+                        </Link>
+                      )}
+
+                      <button
+                        onClick={() => {
+                          setDropdownOpen(false)
+                          logout()
+                          router.push('/')
+                        }}
+                        className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Sign out
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <Link
                   href="/auth/login"
-                  className={cn(
-                    buttonVariants({ variant: 'ghost', size: 'sm' }),
-                    onDarkHero
-                      ? 'text-white/80 hover:text-white hover:bg-white/10'
-                      : 'text-stone-700'
-                  )}
+                  className="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors px-3 py-1.5"
                 >
                   Sign in
                 </Link>
                 <Link
                   href="/auth/register"
-                  className={cn(buttonVariants({ size: 'sm' }), 'shadow-sm')}
+                  className="gradient-bg text-white text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-full hover:shadow-lg hover:shadow-brand-primary/20 transition-all duration-300 transform hover:scale-[1.03]"
                 >
                   Sign up
                 </Link>

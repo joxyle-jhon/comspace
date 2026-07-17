@@ -1,105 +1,130 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Star, MapPin, Users } from 'lucide-react'
-import { cn, formatCents, pluralize } from '@/lib/utils'
-import type { Property } from '@/types'
+import { MapPin, Users, Star } from 'lucide-react'
+import { formatCents, pluralize } from '@/lib/utils'
+
+export interface PropertyImage {
+  id: number
+  url: string
+  caption: string | null
+  is_cover: boolean
+}
+
+export interface Property {
+  id: number
+  title: string
+  description: string
+  type: string
+  location: {
+    city: string
+    country: string
+  }
+  capacity: {
+    max_guests: number
+    bedrooms: number
+    beds: number
+    bathrooms: number
+  }
+  pricing: {
+    price_per_night: number
+    price_formatted: string
+  }
+  rules: {
+    instant_book: boolean
+  }
+  stats: {
+    average_rating: number
+    review_count: number
+  }
+  images?: PropertyImage[]
+}
 
 interface PropertyCardProps {
   property: Property
-  className?: string
-  priority?: boolean
 }
 
-export function PropertyCard({ property, className, priority = false }: PropertyCardProps) {
-  const cover = property.images?.find((img) => img.is_cover) ?? property.images?.[0]
-  const location = `${property.location.city}, ${property.location.country}`
+export default function PropertyCard({ property }: PropertyCardProps) {
+  const coverImage = property.images?.find((img) => img.is_cover) || property.images?.[0]
 
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
-      className={cn('group', className)}
+    <Link
+      href={`/properties/${property.id}`}
+      className="group bg-white rounded-3xl overflow-hidden border border-slate-100/80 shadow-sm card-hover hover:border-slate-200/50 flex flex-col h-full focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2"
     >
-      <Link
-        href={`/properties/${property.id}`}
-        aria-label={`View ${property.title} in ${location}`}
-        className="block rounded-2xl overflow-hidden bg-white shadow-card card-hover focus-visible:ring-2 focus-visible:ring-brand-500"
-      >
-        {/* Image */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-stone-100">
-          {cover ? (
-            <Image
-              src={cover.url}
-              alt={cover.caption ?? property.title}
-              fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
-              priority={priority}
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-stone-200">
-              <span className="text-stone-400 text-sm">No image</span>
-            </div>
-          )}
+      {/* Image container */}
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100 shrink-0">
+        {coverImage ? (
+          <Image
+            src={coverImage.url}
+            alt={coverImage.caption || property.title}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            priority={false}
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center text-slate-400">
+            <span className="text-sm font-semibold">No Image Available</span>
+          </div>
+        )}
 
-          {/* Instant book badge */}
-          {property.rules.instant_book && (
-            <span className="absolute top-3 left-3 px-2 py-1 rounded-lg bg-teal-500 text-white text-xs font-semibold">
-              Instant Book
-            </span>
-          )}
+        {/* Instant book badge */}
+        {property.rules.instant_book && (
+          <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-emerald-500 text-white text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm shadow-md">
+            Instant
+          </span>
+        )}
 
-          {/* Rating badge */}
-          {property.stats.review_count > 0 && (
-            <span className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 rounded-lg bg-white/90 backdrop-blur-sm text-stone-800 text-xs font-semibold shadow-sm">
-              <Star className="w-3 h-3 fill-brand-500 text-brand-500" aria-hidden="true" />
-              {property.stats.average_rating.toFixed(1)}
-            </span>
-          )}
-        </div>
+        {/* Rating badge */}
+        {property.stats.review_count > 0 && (
+          <span className="absolute top-4 right-4 flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-extrabold shadow-sm border border-emerald-100">
+            <Star className="w-3.5 h-3.5 fill-emerald-600 text-emerald-600" />
+            {property.stats.average_rating.toFixed(1)}
+          </span>
+        )}
+      </div>
 
-        {/* Body */}
-        <div className="p-4">
+      {/* Body content */}
+      <div className="p-6 flex flex-col flex-1 justify-between">
+        <div>
           {/* Location */}
-          <div className="flex items-center gap-1 text-stone-500 text-xs mb-1">
-            <MapPin className="w-3 h-3 shrink-0" aria-hidden="true" />
-            <span>{location}</span>
+          <div className="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-2">
+            <MapPin className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+            <span>{property.location.city}, {property.location.country}</span>
           </div>
 
           {/* Title */}
-          <h3 className="font-heading font-semibold text-stone-900 text-sm leading-snug line-clamp-2 mb-2">
+          <h3 className="font-heading font-bold text-slate-900 text-base leading-snug line-clamp-1 mb-2">
             {property.title}
           </h3>
 
-          {/* Capacity row */}
-          <div className="flex items-center gap-1 text-stone-400 text-xs mb-3">
-            <Users className="w-3 h-3" aria-hidden="true" />
+          {/* Capacity */}
+          <div className="flex items-center gap-1.5 text-slate-500 text-xs font-semibold mb-4">
+            <Users className="w-3.5 h-3.5 text-slate-400" />
             <span>
-              {pluralize(property.capacity.bedrooms, 'bedroom')} ·{' '}
-              {pluralize(property.capacity.bathrooms, 'bath')} ·{' '}
-              Up to {property.capacity.max_guests} guests
+              {pluralize(property.capacity.bedrooms, 'bedroom')} · {property.capacity.max_guests} guests
             </span>
           </div>
-
-          {/* Price */}
-          <div className="flex items-end justify-between">
-            <p className="text-stone-900 font-semibold">
-              <span className="text-lg">{formatCents(property.pricing.price_per_night)}</span>
-              <span className="text-stone-500 font-normal text-sm"> / night</span>
-            </p>
-
-            {property.stats.review_count > 0 && (
-              <p className="text-stone-400 text-xs">
-                {pluralize(property.stats.review_count, 'review')}
-              </p>
-            )}
-          </div>
         </div>
-      </Link>
-    </motion.article>
+
+        {/* Price & reviews */}
+        <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-2">
+          <p className="text-slate-900 font-bold">
+            <span className="text-lg font-black text-brand-primary">
+              {formatCents(property.pricing.price_per_night)}
+            </span>
+            <span className="text-slate-400 font-medium text-xs"> / night</span>
+          </p>
+
+          {property.stats.review_count > 0 && (
+            <span className="text-slate-400 text-xs font-semibold">
+              {pluralize(property.stats.review_count, 'review')}
+            </span>
+          )}
+        </div>
+      </div>
+    </Link>
   )
 }
