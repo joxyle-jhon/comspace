@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: '**.unsplash.com' },
       { protocol: 'https', hostname: '**.pexels.com' },
       { protocol: 'https', hostname: 'res.cloudinary.com' },
+      { protocol: 'https', hostname: '*.supabase.co' },
       { protocol: 'http', hostname: 'localhost' },
     ],
   },
