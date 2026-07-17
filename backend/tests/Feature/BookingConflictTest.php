@@ -4,13 +4,8 @@ use App\Models\Booking;
 use App\Models\Property;
 use App\Models\User;
 use App\Services\BookingService;
-use Illuminate\Support\Facades\DB;
 
 describe('BookingService conflict prevention', function () {
-
-    beforeEach(function () {
-        // Ensure fresh DB state
-    });
 
     it('creates a booking when dates are fully available', function () {
         $host = User::factory()->create(['role' => 'host']);
@@ -29,8 +24,8 @@ describe('BookingService conflict prevention', function () {
         $booking = $service->createBooking(
             guest: $guest,
             property: $property,
-            checkIn: '2025-12-01',
-            checkOut: '2025-12-05',
+            checkIn: '2026-12-01',
+            checkOut: '2026-12-05',
             guestCount: 2
         );
 
@@ -57,11 +52,9 @@ describe('BookingService conflict prevention', function () {
 
         $service = app(BookingService::class);
 
-        // First booking succeeds
-        $service->createBooking($guest1, $property, '2025-12-01', '2025-12-05', 2);
+        $service->createBooking($guest1, $property, '2026-12-01', '2026-12-05', 2);
 
-        // Second booking overlapping first should throw
-        expect(fn () => $service->createBooking($guest2, $property, '2025-12-03', '2025-12-08', 2))
+        expect(fn () => $service->createBooking($guest2, $property, '2026-12-03', '2026-12-08', 2))
             ->toThrow(\Illuminate\Validation\ValidationException::class);
     });
 
@@ -79,10 +72,9 @@ describe('BookingService conflict prevention', function () {
         ]);
 
         $service = app(BookingService::class);
-        $service->createBooking($guest1, $property, '2025-12-01', '2025-12-05', 2);
+        $service->createBooking($guest1, $property, '2026-12-01', '2026-12-05', 2);
 
-        // Starts exactly when previous ends — no overlap
-        $booking2 = $service->createBooking($guest2, $property, '2025-12-05', '2025-12-08', 2);
+        $booking2 = $service->createBooking($guest2, $property, '2026-12-05', '2026-12-08', 2);
 
         expect($booking2)->toBeInstanceOf(Booking::class);
     });
@@ -99,7 +91,7 @@ describe('BookingService conflict prevention', function () {
         ]);
 
         expect(fn () => app(BookingService::class)->createBooking(
-            $guest, $property, '2025-12-01', '2025-12-02', 1
+            $guest, $property, '2026-12-01', '2026-12-02', 1
         ))->toThrow(\Illuminate\Validation\ValidationException::class);
     });
 
@@ -115,7 +107,7 @@ describe('BookingService conflict prevention', function () {
         ]);
 
         expect(fn () => app(BookingService::class)->createBooking(
-            $guest, $property, '2025-12-01', '2025-12-05', 10 // exceeds max_guests
+            $guest, $property, '2026-12-01', '2026-12-05', 10
         ))->toThrow(\Illuminate\Validation\ValidationException::class);
     });
 
@@ -129,14 +121,14 @@ describe('BookingService conflict prevention', function () {
         ]);
 
         $pricing = app(BookingService::class)->calculatePrice(
-            $property, '2025-12-01', '2025-12-04' // 3 nights
+            $property, '2026-12-01', '2026-12-04' // 3 nights
         );
 
         expect($pricing['nights'])->toBe(3)
-            ->and($pricing['subtotal'])->toBe(45000)                      // 3 × 15000
+            ->and($pricing['subtotal'])->toBe(45000)
             ->and($pricing['cleaningFee'])->toBe(3000)
-            ->and($pricing['serviceFee'])->toBe(6300)                     // 14% of 45000
-            ->and($pricing['total'])->toBe(54300);                        // 45000+3000+6300
+            ->and($pricing['serviceFee'])->toBe(6300)
+            ->and($pricing['total'])->toBe(54300);
     });
 
     it('cancelled bookings do not block dates', function () {
@@ -153,13 +145,11 @@ describe('BookingService conflict prevention', function () {
         ]);
 
         $service = app(BookingService::class);
-        $booking = $service->createBooking($guest1, $property, '2025-12-01', '2025-12-05', 2);
+        $booking = $service->createBooking($guest1, $property, '2026-12-01', '2026-12-05', 2);
 
-        // Cancel the booking
         $booking->update(['status' => 'cancelled']);
 
-        // Now the same dates should be available
-        $booking2 = $service->createBooking($guest2, $property, '2025-12-01', '2025-12-05', 2);
+        $booking2 = $service->createBooking($guest2, $property, '2026-12-01', '2026-12-05', 2);
         expect($booking2)->toBeInstanceOf(Booking::class);
     });
 });
