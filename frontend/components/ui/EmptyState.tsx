@@ -1,8 +1,10 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Home, Search } from 'lucide-react'
+import { AlertTriangle, Home, Search } from 'lucide-react'
 import Link from 'next/link'
+import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 interface EmptyStateProps {
   title?: string
@@ -34,7 +36,7 @@ export function EmptyState({
       {action && (
         <Link
           href={action.href}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-500 text-white text-sm font-semibold hover:bg-brand-600 transition-colors"
+          className={cn(buttonVariants({ size: 'xl' }), 'inline-flex gap-2')}
         >
           <Search className="w-4 h-4" aria-hidden="true" />
           {action.label}
@@ -51,7 +53,7 @@ export function ErrorState({ message = 'Something went wrong. Please try again.'
       className="flex flex-col items-center justify-center py-24 px-6 text-center"
     >
       <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center mb-6">
-        <span className="text-3xl" aria-hidden="true">⚠️</span>
+        <AlertTriangle className="w-8 h-8 text-destructive" aria-hidden="true" />
       </div>
       <h2 className="font-heading text-xl font-semibold text-stone-800 mb-2">Oops!</h2>
       <p className="text-stone-500 max-w-sm text-sm">{message}</p>

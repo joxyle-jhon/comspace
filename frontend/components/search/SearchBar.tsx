@@ -5,11 +5,17 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Search, MapPin, Calendar, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 interface SearchBarProps {
   className?: string
   compact?: boolean
 }
+
+const fieldInputClass =
+  'h-auto border-0 bg-transparent px-0 py-0 shadow-none focus-visible:ring-0 md:text-sm'
 
 export function SearchBar({ className, compact = false }: SearchBarProps) {
   const router = useRouter()
@@ -34,14 +40,16 @@ export function SearchBar({ className, compact = false }: SearchBarProps) {
 
   if (compact) {
     return (
-      <button
+      <Button
+        type="button"
+        variant="outline"
         onClick={() => router.push('/properties')}
-        className="flex items-center gap-3 px-4 py-2.5 rounded-full border border-stone-200 bg-white shadow-sm hover:shadow-md transition-all text-sm text-stone-500"
+        className="h-auto rounded-full px-4 py-2.5 text-sm font-normal text-stone-500 shadow-sm hover:shadow-md"
         aria-label="Open search"
       >
-        <Search className="w-4 h-4 text-brand-500" aria-hidden="true" />
-        <span>Search destinations…</span>
-      </button>
+        <Search className="w-4 h-4 text-primary" aria-hidden="true" />
+        Search destinations…
+      </Button>
     )
   }
 
@@ -57,7 +65,6 @@ export function SearchBar({ className, compact = false }: SearchBarProps) {
       role="search"
       aria-label="Property search"
     >
-      {/* Location */}
       <div
         className={cn(
           'flex items-center gap-3 px-5 py-4 flex-1 border-b md:border-b-0 md:border-r border-stone-100 cursor-text',
@@ -65,12 +72,12 @@ export function SearchBar({ className, compact = false }: SearchBarProps) {
         )}
         onClick={() => document.getElementById('search-location')?.focus()}
       >
-        <MapPin className="w-5 h-5 text-brand-500 shrink-0" aria-hidden="true" />
+        <MapPin className="w-5 h-5 text-primary shrink-0" aria-hidden="true" />
         <div className="flex-1">
-          <label htmlFor="search-location" className="block text-xs font-semibold text-stone-700 mb-0.5">
+          <Label htmlFor="search-location" className="text-xs font-semibold text-stone-700 mb-0.5">
             Where
-          </label>
-          <input
+          </Label>
+          <Input
             id="search-location"
             type="text"
             placeholder="Search destinations"
@@ -79,25 +86,23 @@ export function SearchBar({ className, compact = false }: SearchBarProps) {
             onFocus={() => setActiveField('location')}
             onBlur={() => setActiveField(null)}
             onKeyDown={handleKeyDown}
-            className="w-full text-sm text-stone-800 placeholder-stone-400 bg-transparent outline-none"
-            aria-label="Destination"
+            className={fieldInputClass}
           />
         </div>
       </div>
 
-      {/* Check-in */}
       <div
         className={cn(
           'flex items-center gap-3 px-5 py-4 flex-1 border-b md:border-b-0 md:border-r border-stone-100 cursor-text',
           activeField === 'checkin' && 'bg-stone-50'
         )}
       >
-        <Calendar className="w-5 h-5 text-brand-500 shrink-0" aria-hidden="true" />
+        <Calendar className="w-5 h-5 text-primary shrink-0" aria-hidden="true" />
         <div className="flex-1">
-          <label htmlFor="search-checkin" className="block text-xs font-semibold text-stone-700 mb-0.5">
+          <Label htmlFor="search-checkin" className="text-xs font-semibold text-stone-700 mb-0.5">
             Check in
-          </label>
-          <input
+          </Label>
+          <Input
             id="search-checkin"
             type="date"
             value={checkIn}
@@ -105,13 +110,11 @@ export function SearchBar({ className, compact = false }: SearchBarProps) {
             onChange={(e) => setCheckIn(e.target.value)}
             onFocus={() => setActiveField('checkin')}
             onBlur={() => setActiveField(null)}
-            className="w-full text-sm text-stone-800 bg-transparent outline-none [color-scheme:light]"
-            aria-label="Check-in date"
+            className={cn(fieldInputClass, '[color-scheme:light]')}
           />
         </div>
       </div>
 
-      {/* Check-out */}
       <div
         className={cn(
           'flex items-center gap-3 px-5 py-4 flex-1 border-b md:border-b-0 md:border-r border-stone-100 cursor-text',
@@ -120,10 +123,10 @@ export function SearchBar({ className, compact = false }: SearchBarProps) {
       >
         <Calendar className="w-5 h-5 text-stone-400 shrink-0" aria-hidden="true" />
         <div className="flex-1">
-          <label htmlFor="search-checkout" className="block text-xs font-semibold text-stone-700 mb-0.5">
+          <Label htmlFor="search-checkout" className="text-xs font-semibold text-stone-700 mb-0.5">
             Check out
-          </label>
-          <input
+          </Label>
+          <Input
             id="search-checkout"
             type="date"
             value={checkOut}
@@ -131,13 +134,11 @@ export function SearchBar({ className, compact = false }: SearchBarProps) {
             onChange={(e) => setCheckOut(e.target.value)}
             onFocus={() => setActiveField('checkout')}
             onBlur={() => setActiveField(null)}
-            className="w-full text-sm text-stone-800 bg-transparent outline-none [color-scheme:light]"
-            aria-label="Check-out date"
+            className={cn(fieldInputClass, '[color-scheme:light]')}
           />
         </div>
       </div>
 
-      {/* Guests */}
       <div
         className={cn(
           'flex items-center gap-3 px-5 py-4 flex-1',
@@ -146,10 +147,10 @@ export function SearchBar({ className, compact = false }: SearchBarProps) {
       >
         <Users className="w-5 h-5 text-stone-400 shrink-0" aria-hidden="true" />
         <div className="flex-1">
-          <label htmlFor="search-guests" className="block text-xs font-semibold text-stone-700 mb-0.5">
+          <Label htmlFor="search-guests" className="text-xs font-semibold text-stone-700 mb-0.5">
             Guests
-          </label>
-          <input
+          </Label>
+          <Input
             id="search-guests"
             type="number"
             min={1}
@@ -158,23 +159,23 @@ export function SearchBar({ className, compact = false }: SearchBarProps) {
             onChange={(e) => setGuests(Math.max(1, parseInt(e.target.value) || 1))}
             onFocus={() => setActiveField('guests')}
             onBlur={() => setActiveField(null)}
-            className="w-full text-sm text-stone-800 bg-transparent outline-none"
-            aria-label="Number of guests"
+            className={fieldInputClass}
           />
         </div>
       </div>
 
-      {/* Search button */}
       <div className="flex items-center p-3">
-        <button
+        <Button
+          type="button"
           id="search-submit"
+          size="xl"
           onClick={handleSearch}
-          className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm transition-colors w-full md:w-auto whitespace-nowrap"
+          className="w-full md:w-auto whitespace-nowrap"
           aria-label="Search properties"
         >
           <Search className="w-4 h-4" aria-hidden="true" />
-          <span>Search</span>
-        </button>
+          Search
+        </Button>
       </div>
     </motion.div>
   )

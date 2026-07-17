@@ -8,6 +8,8 @@ import { propertiesApi } from '@/lib/services'
 import { PropertyCard } from '@/components/properties/PropertyCard'
 import { PropertyGridSkeleton } from '@/components/properties/PropertyCardSkeleton'
 import { ErrorState } from '@/components/ui/EmptyState'
+import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 export function FeaturedProperties() {
   const { data, isLoading, isError } = useQuery({
@@ -62,7 +64,7 @@ export function FeaturedProperties() {
         <div className="mt-8 text-center md:hidden">
           <Link
             href="/properties"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-500 text-white font-semibold hover:bg-brand-600 transition-colors"
+            className={cn(buttonVariants({ size: 'xl' }), 'inline-flex gap-2')}
           >
             Browse all properties
             <ArrowRight className="w-4 h-4" aria-hidden="true" />
