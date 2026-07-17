@@ -135,13 +135,16 @@ class Property extends Model
      */
     public function scopeAvailableForDates(Builder $query, string $checkIn, string $checkOut): Builder
     {
+        $checkIn = now()->parse($checkIn)->toDateString();
+        $checkOut = now()->parse($checkOut)->toDateString();
+
         return $query->whereDoesntHave('bookings', function (Builder $q) use ($checkIn, $checkOut) {
             $q->whereIn('status', ['confirmed', 'pending'])
-              ->where('check_in', '<', $checkOut)
-              ->where('check_out', '>', $checkIn);
+              ->whereDate('check_in', '<', $checkOut)
+              ->whereDate('check_out', '>', $checkIn);
         })->whereDoesntHave('availabilityBlocks', function (Builder $q) use ($checkIn, $checkOut) {
-            $q->where('blocked_from', '<', $checkOut)
-              ->where('blocked_to', '>', $checkIn);
+            $q->whereDate('blocked_from', '<', $checkOut)
+              ->whereDate('blocked_to', '>', $checkIn);
         });
     }
 }
