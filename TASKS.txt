@@ -21,22 +21,22 @@ STATUS: DONE
     - File: backend/phpunit.xml, backend/tests/Pest.php
 
 BRANCH: feature/backend-auth-hardening
-PRIORITY: 1
+STATUS: DONE
 ------
-[ ] Add request validation to AuthController (login, register)
+[x] Add request validation to AuthController (login, register)
     - Use FormRequest classes (e.g. LoginRequest, RegisterRequest)
     - Add email uniqueness rule on register
     - File: backend/app/Http/Controllers/Api/AuthController.php
-[ ] Add rate limiting to /api/auth/login route (max 5/min)
+[x] Add rate limiting to /api/auth/login route (max 5/min)
     - Use Laravel's ThrottleRequests middleware
     - File: backend/routes/api.php
-[ ] Return structured error responses on all endpoints
+[x] Return structured error responses on all endpoints
     - Format: { success: false, error: { code, message } }
     - See SKILL.md Error Handling section for the required format
     - File: backend/app/Http/Controllers/Api/*.php
 
 BRANCH: test/backend-auth-api
-PRIORITY: 2
+PRIORITY: 1
 ------
 [ ] Write Pest feature test: AuthApiTest
     - Test: register with valid data returns token
@@ -46,7 +46,7 @@ PRIORITY: 2
     - File: backend/tests/Feature/AuthApiTest.php
 
 BRANCH: feature/backend-property-search
-PRIORITY: 3
+PRIORITY: 2
 ------
 [ ] Implement full property search in PropertyController@index
     - Filter by: location (city/country ILIKE), check_in/check_out, guests
@@ -57,7 +57,7 @@ PRIORITY: 3
     - File: backend/app/Models/Property.php (scopes), PropertyController.php
 
 BRANCH: feature/backend-price-preview
-PRIORITY: 4
+PRIORITY: 3
 ------
 [ ] Add GET /api/properties/{id}/price-preview endpoint
     - Accepts: check_in, check_out query params
@@ -67,7 +67,7 @@ PRIORITY: 4
     - File: backend/routes/api.php, backend/app/Http/Controllers/Api/PropertyController.php
 
 BRANCH: feature/backend-image-upload
-PRIORITY: 5
+PRIORITY: 4
 ------
 [ ] Implement POST /api/properties/{id}/images endpoint
     - Accept multipart image uploads
@@ -78,7 +78,7 @@ PRIORITY: 5
     - File: backend/app/Http/Controllers/Api/PropertyController.php
 
 BRANCH: test/backend-booking-api
-PRIORITY: 6
+PRIORITY: 5
 ------
 [ ] Write Pest feature test: BookingApiTest
     - Test: guest can create booking (returns 201)
@@ -89,7 +89,7 @@ PRIORITY: 6
     - File: backend/tests/Feature/BookingApiTest.php
 
 BRANCH: feature/backend-availability-blocks
-PRIORITY: 7
+PRIORITY: 6
 ------
 [ ] Add POST /api/properties/{id}/availability endpoint (host only)
     - Allows hosts to block off dates (vacations, maintenance)
@@ -97,7 +97,7 @@ PRIORITY: 7
     - File: backend/app/Models/AvailabilityBlock.php
 
 BRANCH: feature/backend-review-reply
-PRIORITY: 8
+PRIORITY: 7
 ------
 [ ] Implement POST /api/reviews/{id}/reply endpoint
     - Allow host to reply to guest reviews on their property
@@ -107,7 +107,7 @@ PRIORITY: 8
     - File: backend/app/Policies/ReviewPolicy.php
 
 BRANCH: feature/backend-host-dashboard-api
-PRIORITY: 9
+PRIORITY: 8
 ------
 [ ] Add GET /api/host/stats endpoint
     - Returns: total_properties, total_bookings, total_revenue (cents),

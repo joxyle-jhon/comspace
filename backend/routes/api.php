@@ -15,7 +15,8 @@ use Illuminate\Support\Facades\Route;
 // ─── Public Routes ─────────────────────────────────────────────────────────
 
 Route::post('/auth/register', [AuthController::class, 'register']);
-Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/login', [AuthController::class, 'login'])
+    ->middleware('throttle:5,1');
 
 // Properties — public browsing
 Route::get('/properties', [PropertyController::class, 'index']);
