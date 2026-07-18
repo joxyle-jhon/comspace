@@ -12,14 +12,16 @@
 ============================
 
 BRANCH: fix/backend-tests
+STATUS: DONE
 ------
-[ ] Fix failing Pest tests (SQLite driver missing)
+[x] Fix failing Pest tests (SQLite driver missing)
     - Enable pdo_sqlite extension in php.ini (Laragon)
     - OR switch phpunit.xml to use pgsql with a test database
     - Ensure all 7 BookingConflictTest cases pass
     - File: backend/phpunit.xml, backend/tests/Pest.php
 
 BRANCH: feature/backend-auth-hardening
+PRIORITY: 1
 ------
 [ ] Add request validation to AuthController (login, register)
     - Use FormRequest classes (e.g. LoginRequest, RegisterRequest)
@@ -33,7 +35,18 @@ BRANCH: feature/backend-auth-hardening
     - See SKILL.md Error Handling section for the required format
     - File: backend/app/Http/Controllers/Api/*.php
 
+BRANCH: test/backend-auth-api
+PRIORITY: 2
+------
+[ ] Write Pest feature test: AuthApiTest
+    - Test: register with valid data returns token
+    - Test: login with invalid credentials returns 422
+    - Test: rate limiting returns 429 after 5 failed logins
+    - Test: logout invalidates token
+    - File: backend/tests/Feature/AuthApiTest.php
+
 BRANCH: feature/backend-property-search
+PRIORITY: 3
 ------
 [ ] Implement full property search in PropertyController@index
     - Filter by: location (city/country ILIKE), check_in/check_out, guests
@@ -44,6 +57,7 @@ BRANCH: feature/backend-property-search
     - File: backend/app/Models/Property.php (scopes), PropertyController.php
 
 BRANCH: feature/backend-price-preview
+PRIORITY: 4
 ------
 [ ] Add GET /api/properties/{id}/price-preview endpoint
     - Accepts: check_in, check_out query params
@@ -52,14 +66,8 @@ BRANCH: feature/backend-price-preview
     - Validate dates are not in the past and check_out > check_in
     - File: backend/routes/api.php, backend/app/Http/Controllers/Api/PropertyController.php
 
-BRANCH: feature/backend-availability-blocks
-------
-[ ] Add POST /api/properties/{id}/availability endpoint (host only)
-    - Allows hosts to block off dates (vacations, maintenance)
-    - File: backend/database/migrations/..._create_availability_blocks_table.php
-    - File: backend/app/Models/AvailabilityBlock.php
-
 BRANCH: feature/backend-image-upload
+PRIORITY: 5
 ------
 [ ] Implement POST /api/properties/{id}/images endpoint
     - Accept multipart image uploads
@@ -69,24 +77,8 @@ BRANCH: feature/backend-image-upload
     - Max 10 images per property, validate mime types (jpg, png, webp)
     - File: backend/app/Http/Controllers/Api/PropertyController.php
 
-BRANCH: feature/backend-host-dashboard-api
-------
-[ ] Add GET /api/host/stats endpoint
-    - Returns: total_properties, total_bookings, total_revenue (cents),
-               pending_bookings, avg_rating, recent_bookings[]
-    - Auth protected: host only
-    - File: backend/routes/api.php, new HostController.php
-
-BRANCH: feature/backend-review-reply
-------
-[ ] Implement POST /api/reviews/{id}/reply endpoint
-    - Allow host to reply to guest reviews on their property
-    - Update host_reply and host_replied_at columns
-    - Only the property owner can reply; only once
-    - File: backend/app/Http/Controllers/Api/ReviewController.php
-    - File: backend/app/Policies/ReviewPolicy.php
-
 BRANCH: test/backend-booking-api
+PRIORITY: 6
 ------
 [ ] Write Pest feature test: BookingApiTest
     - Test: guest can create booking (returns 201)
@@ -96,14 +88,32 @@ BRANCH: test/backend-booking-api
     - Test: unauthenticated user gets 401 on all protected endpoints
     - File: backend/tests/Feature/BookingApiTest.php
 
-BRANCH: test/backend-auth-api
+BRANCH: feature/backend-availability-blocks
+PRIORITY: 7
 ------
-[ ] Write Pest feature test: AuthApiTest
-    - Test: register with valid data returns token
-    - Test: login with invalid credentials returns 422
-    - Test: rate limiting returns 429 after 5 failed logins
-    - Test: logout invalidates token
-    - File: backend/tests/Feature/AuthApiTest.php
+[ ] Add POST /api/properties/{id}/availability endpoint (host only)
+    - Allows hosts to block off dates (vacations, maintenance)
+    - File: backend/database/migrations/..._create_availability_blocks_table.php
+    - File: backend/app/Models/AvailabilityBlock.php
+
+BRANCH: feature/backend-review-reply
+PRIORITY: 8
+------
+[ ] Implement POST /api/reviews/{id}/reply endpoint
+    - Allow host to reply to guest reviews on their property
+    - Update host_reply and host_replied_at columns
+    - Only the property owner can reply; only once
+    - File: backend/app/Http/Controllers/Api/ReviewController.php
+    - File: backend/app/Policies/ReviewPolicy.php
+
+BRANCH: feature/backend-host-dashboard-api
+PRIORITY: 9
+------
+[ ] Add GET /api/host/stats endpoint
+    - Returns: total_properties, total_bookings, total_revenue (cents),
+               pending_bookings, avg_rating, recent_bookings[]
+    - Auth protected: host only
+    - File: backend/routes/api.php, new HostController.php
 
 
 ============================
