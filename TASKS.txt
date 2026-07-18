@@ -36,17 +36,18 @@ STATUS: DONE
     - File: backend/app/Http/Controllers/Api/*.php
 
 BRANCH: test/backend-auth-api
-PRIORITY: 1
+STATUS: DONE
 ------
-[ ] Write Pest feature test: AuthApiTest
+[x] Write Pest feature test: AuthApiTest
     - Test: register with valid data returns token
-    - Test: login with invalid credentials returns 422
+    - Test: login with invalid credentials returns 401
+    - Test: login with invalid payload returns 422
     - Test: rate limiting returns 429 after 5 failed logins
     - Test: logout invalidates token
     - File: backend/tests/Feature/AuthApiTest.php
 
 BRANCH: feature/backend-property-search
-PRIORITY: 2
+PRIORITY: 1
 ------
 [ ] Implement full property search in PropertyController@index
     - Filter by: location (city/country ILIKE), check_in/check_out, guests
@@ -57,7 +58,7 @@ PRIORITY: 2
     - File: backend/app/Models/Property.php (scopes), PropertyController.php
 
 BRANCH: feature/backend-price-preview
-PRIORITY: 3
+PRIORITY: 2
 ------
 [ ] Add GET /api/properties/{id}/price-preview endpoint
     - Accepts: check_in, check_out query params
@@ -67,7 +68,7 @@ PRIORITY: 3
     - File: backend/routes/api.php, backend/app/Http/Controllers/Api/PropertyController.php
 
 BRANCH: feature/backend-image-upload
-PRIORITY: 4
+PRIORITY: 3
 ------
 [ ] Implement POST /api/properties/{id}/images endpoint
     - Accept multipart image uploads
@@ -78,7 +79,7 @@ PRIORITY: 4
     - File: backend/app/Http/Controllers/Api/PropertyController.php
 
 BRANCH: test/backend-booking-api
-PRIORITY: 5
+PRIORITY: 4
 ------
 [ ] Write Pest feature test: BookingApiTest
     - Test: guest can create booking (returns 201)
@@ -89,7 +90,7 @@ PRIORITY: 5
     - File: backend/tests/Feature/BookingApiTest.php
 
 BRANCH: feature/backend-availability-blocks
-PRIORITY: 6
+PRIORITY: 5
 ------
 [ ] Add POST /api/properties/{id}/availability endpoint (host only)
     - Allows hosts to block off dates (vacations, maintenance)
@@ -97,7 +98,7 @@ PRIORITY: 6
     - File: backend/app/Models/AvailabilityBlock.php
 
 BRANCH: feature/backend-review-reply
-PRIORITY: 7
+PRIORITY: 6
 ------
 [ ] Implement POST /api/reviews/{id}/reply endpoint
     - Allow host to reply to guest reviews on their property
@@ -107,7 +108,7 @@ PRIORITY: 7
     - File: backend/app/Policies/ReviewPolicy.php
 
 BRANCH: feature/backend-host-dashboard-api
-PRIORITY: 8
+PRIORITY: 7
 ------
 [ ] Add GET /api/host/stats endpoint
     - Returns: total_properties, total_bookings, total_revenue (cents),
