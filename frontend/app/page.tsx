@@ -5,7 +5,7 @@ import { ArrowRight, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { api } from '@/lib/api'
 import Navbar from '@/components/layout/Navbar'
-import SearchBar from '@/components/search/SearchBar'
+import SearchBar, { PropertySearchValues } from '@/components/search/SearchBar'
 import CategoryStrip from '@/components/home/CategoryStrip'
 import PropertyCard, { Property } from '@/components/properties/PropertyCard'
 import StatsSection from '@/components/home/StatsSection'
@@ -18,39 +18,48 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-
-  const fetchProperties = async (category: string | null = null) => {
-    setIsLoading(true)
-    setError(null)
-    try {
-      const params: any = {}
-      if (category) {
-        params.type = category
-      }
-      const res = await api.get('/properties', { params })
-      // Laravel paginate responses place data in res.data.data
-      setProperties(res.data.data || [])
-    } catch (err: any) {
-      console.error('Failed to fetch properties', err)
-      setError('Could not load properties at this time.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const [reloadKey, setReloadKey] = useState(0)
 
   useEffect(() => {
-    fetchProperties(activeCategory)
-  }, [activeCategory])
+    let cancelled = false
+    const params = activeCategory ? { type: activeCategory } : {}
+
+    api
+      .get('/properties', { params })
+      .then((response) => {
+        if (cancelled) return
+        setProperties(response.data.data || [])
+        setError(null)
+      })
+      .catch(() => {
+        if (!cancelled) setError('Could not load properties at this time.')
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [activeCategory, reloadKey])
 
   const handleSelectCategory = (category: string | null) => {
+    setIsLoading(true)
+    setError(null)
     setActiveCategory(category)
   }
 
-  const handleSearch = async (searchParams: any) => {
+  const reloadProperties = () => {
+    setIsLoading(true)
+    setError(null)
+    setReloadKey((key) => key + 1)
+  }
+
+  const handleSearch = async (searchParams: PropertySearchValues) => {
     setIsLoading(true)
     setError(null)
     try {
-      const params: any = {}
+      const params: Record<string, string | number> = {}
       if (searchParams.location) params.location = searchParams.location
       if (searchParams.checkIn) params.check_in = searchParams.checkIn
       if (searchParams.checkOut) params.check_out = searchParams.checkOut
@@ -59,8 +68,7 @@ export default function Home() {
 
       const res = await api.get('/properties', { params })
       setProperties(res.data.data || [])
-    } catch (err) {
-      console.error('Search failed', err)
+    } catch {
       setError('Search request failed.')
     } finally {
       setIsLoading(false)
@@ -136,7 +144,7 @@ export default function Home() {
             <div className="text-center py-12">
               <p className="text-slate-500 font-semibold">{error}</p>
               <button
-                onClick={() => fetchProperties(activeCategory)}
+                onClick={reloadProperties}
                 className="mt-4 px-6 py-2.5 bg-brand-primary hover:bg-brand-secondary text-white rounded-full text-xs font-bold uppercase tracking-wider transition-colors"
               >
                 Try Again
@@ -154,8 +162,8 @@ export default function Home() {
               </p>
               <button
                 onClick={() => {
-                  setActiveCategory(null)
-                  fetchProperties(null)
+                  if (activeCategory === null) reloadProperties()
+                  else handleSelectCategory(null)
                 }}
                 className="px-6 py-3 gradient-bg text-white rounded-full text-xs font-bold uppercase tracking-wider transition-all"
               >
