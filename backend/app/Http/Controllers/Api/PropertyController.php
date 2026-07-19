@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PropertySearchRequest;
 use App\Http\Resources\PropertyImageResource;
 use App\Http\Resources\PropertyResource;
 use App\Models\Property;
@@ -18,13 +19,13 @@ class PropertyController extends Controller
     /**
      * Browse/search properties with filtering.
      */
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(PropertySearchRequest $request): AnonymousResourceCollection
     {
+        $filters = $request->validated();
         $query = Property::published()
             ->with(['images', 'amenities', 'host']);
 
-        // Location filter
-        if ($location = $request->get('location')) {
+        if ($location = $filters['location'] ?? null) {
             $query->where(function ($q) use ($location) {
                 $q->inCity($location)->orWhere(function ($q2) use ($location) {
                     $q2->inCountry($location);
@@ -32,49 +33,42 @@ class PropertyController extends Controller
             });
         }
 
-        // Guest count
-        if ($guests = $request->integer('guests')) {
-            $query->forGuests($guests);
+        if (isset($filters['guests'])) {
+            $query->forGuests($filters['guests']);
         }
 
-        // Date availability
-        if ($request->filled(['check_in', 'check_out'])) {
-            $query->availableForDates($request->get('check_in'), $request->get('check_out'));
+        if (isset($filters['check_in'], $filters['check_out'])) {
+            $query->availableForDates($filters['check_in'], $filters['check_out']);
         }
 
-        // Price range (values in cents from frontend)
-        if ($request->filled('min_price')) {
-            $query->where('price_per_night', '>=', $request->integer('min_price'));
-        }
-        if ($request->filled('max_price')) {
-            $query->where('price_per_night', '<=', $request->integer('max_price'));
+        if (isset($filters['min_price'])) {
+            $query->where('price_per_night', '>=', $filters['min_price']);
         }
 
-        // Amenities
-        if ($amenities = $request->get('amenities')) {
-            $ids = is_array($amenities) ? $amenities : explode(',', $amenities);
-            $query->withAmenities(array_map('intval', $ids));
+        if (isset($filters['max_price'])) {
+            $query->where('price_per_night', '<=', $filters['max_price']);
         }
 
-        // Property type
-        if ($type = $request->get('type')) {
+        if ($amenities = $filters['amenities'] ?? null) {
+            $query->withAmenities($amenities);
+        }
+
+        if ($type = $filters['type'] ?? null) {
             $query->where('type', $type);
         }
 
-        // Instant book
-        if ($request->boolean('instant_book')) {
-            $query->where('instant_book', true);
+        if (isset($filters['instant_book'])) {
+            $query->where('instant_book', $request->boolean('instant_book'));
         }
 
-        // Sorting
-        $sort = $request->get('sort', 'created_at');
-        $dir  = $request->get('dir', 'desc');
-        $allowed = ['price_per_night', 'average_rating', 'created_at'];
-        if (in_array($sort, $allowed)) {
-            $query->orderBy($sort, $dir === 'asc' ? 'asc' : 'desc');
-        }
+        $sort = $filters['sort'] ?? 'created_at';
+        $direction = $filters['dir'] ?? 'desc';
 
-        $properties = $query->paginate($request->integer('per_page', 12));
+        $properties = $query
+            ->orderBy($sort, $direction)
+            ->orderBy('id')
+            ->paginate(12)
+            ->withQueryString();
 
         return PropertyResource::collection($properties);
     }
@@ -97,35 +91,35 @@ class PropertyController extends Controller
         $this->authorize('create', Property::class);
 
         $data = $request->validate([
-            'title'              => ['required', 'string', 'max:255'],
-            'description'        => ['required', 'string', 'min:50'],
-            'type'               => ['required', 'in:apartment,house,villa,cabin,studio,loft,condo,other'],
-            'address'            => ['required', 'string'],
-            'city'               => ['required', 'string'],
-            'state'              => ['nullable', 'string'],
-            'country'            => ['required', 'string'],
-            'postal_code'        => ['nullable', 'string'],
-            'latitude'           => ['nullable', 'numeric', 'between:-90,90'],
-            'longitude'          => ['nullable', 'numeric', 'between:-180,180'],
-            'max_guests'         => ['required', 'integer', 'min:1', 'max:50'],
-            'bedrooms'           => ['required', 'integer', 'min:0'],
-            'beds'               => ['required', 'integer', 'min:1'],
-            'bathrooms'          => ['required', 'integer', 'min:1'],
-            'price_per_night'    => ['required', 'integer', 'min:100'], // min $1
-            'cleaning_fee'       => ['sometimes', 'integer', 'min:0'],
-            'service_fee_percent'=> ['sometimes', 'integer', 'min:0', 'max:50'],
-            'min_nights'         => ['sometimes', 'integer', 'min:1'],
-            'max_nights'         => ['sometimes', 'integer', 'min:1', 'max:365'],
-            'instant_book'       => ['sometimes', 'boolean'],
-            'amenity_ids'        => ['sometimes', 'array'],
-            'amenity_ids.*'      => ['integer', 'exists:amenities,id'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string', 'min:50'],
+            'type' => ['required', 'in:apartment,house,villa,cabin,studio,loft,condo,other'],
+            'address' => ['required', 'string'],
+            'city' => ['required', 'string'],
+            'state' => ['nullable', 'string'],
+            'country' => ['required', 'string'],
+            'postal_code' => ['nullable', 'string'],
+            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
+            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
+            'max_guests' => ['required', 'integer', 'min:1', 'max:50'],
+            'bedrooms' => ['required', 'integer', 'min:0'],
+            'beds' => ['required', 'integer', 'min:1'],
+            'bathrooms' => ['required', 'integer', 'min:1'],
+            'price_per_night' => ['required', 'integer', 'min:100'], // min $1
+            'cleaning_fee' => ['sometimes', 'integer', 'min:0'],
+            'service_fee_percent' => ['sometimes', 'integer', 'min:0', 'max:50'],
+            'min_nights' => ['sometimes', 'integer', 'min:1'],
+            'max_nights' => ['sometimes', 'integer', 'min:1', 'max:365'],
+            'instant_book' => ['sometimes', 'boolean'],
+            'amenity_ids' => ['sometimes', 'array'],
+            'amenity_ids.*' => ['integer', 'exists:amenities,id'],
         ]);
 
         $property = $request->user()->properties()->create(
             collect($data)->except('amenity_ids')->toArray()
         );
 
-        if (!empty($data['amenity_ids'])) {
+        if (! empty($data['amenity_ids'])) {
             $property->amenities()->sync($data['amenity_ids']);
         }
 
@@ -142,27 +136,27 @@ class PropertyController extends Controller
         $this->authorize('update', $property);
 
         $data = $request->validate([
-            'title'              => ['sometimes', 'string', 'max:255'],
-            'description'        => ['sometimes', 'string', 'min:50'],
-            'type'               => ['sometimes', 'in:apartment,house,villa,cabin,studio,loft,condo,other'],
-            'address'            => ['sometimes', 'string'],
-            'city'               => ['sometimes', 'string'],
-            'state'              => ['nullable', 'string'],
-            'country'            => ['sometimes', 'string'],
-            'postal_code'        => ['nullable', 'string'],
-            'latitude'           => ['nullable', 'numeric', 'between:-90,90'],
-            'longitude'          => ['nullable', 'numeric', 'between:-180,180'],
-            'max_guests'         => ['sometimes', 'integer', 'min:1'],
-            'bedrooms'           => ['sometimes', 'integer', 'min:0'],
-            'beds'               => ['sometimes', 'integer', 'min:1'],
-            'bathrooms'          => ['sometimes', 'integer', 'min:1'],
-            'price_per_night'    => ['sometimes', 'integer', 'min:100'],
-            'cleaning_fee'       => ['sometimes', 'integer', 'min:0'],
-            'min_nights'         => ['sometimes', 'integer', 'min:1'],
-            'max_nights'         => ['sometimes', 'integer', 'min:1'],
-            'instant_book'       => ['sometimes', 'boolean'],
-            'amenity_ids'        => ['sometimes', 'array'],
-            'amenity_ids.*'      => ['integer', 'exists:amenities,id'],
+            'title' => ['sometimes', 'string', 'max:255'],
+            'description' => ['sometimes', 'string', 'min:50'],
+            'type' => ['sometimes', 'in:apartment,house,villa,cabin,studio,loft,condo,other'],
+            'address' => ['sometimes', 'string'],
+            'city' => ['sometimes', 'string'],
+            'state' => ['nullable', 'string'],
+            'country' => ['sometimes', 'string'],
+            'postal_code' => ['nullable', 'string'],
+            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
+            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
+            'max_guests' => ['sometimes', 'integer', 'min:1'],
+            'bedrooms' => ['sometimes', 'integer', 'min:0'],
+            'beds' => ['sometimes', 'integer', 'min:1'],
+            'bathrooms' => ['sometimes', 'integer', 'min:1'],
+            'price_per_night' => ['sometimes', 'integer', 'min:100'],
+            'cleaning_fee' => ['sometimes', 'integer', 'min:0'],
+            'min_nights' => ['sometimes', 'integer', 'min:1'],
+            'max_nights' => ['sometimes', 'integer', 'min:1'],
+            'instant_book' => ['sometimes', 'boolean'],
+            'amenity_ids' => ['sometimes', 'array'],
+            'amenity_ids.*' => ['integer', 'exists:amenities,id'],
         ]);
 
         $property->update(collect($data)->except('amenity_ids')->toArray());
@@ -231,7 +225,7 @@ class PropertyController extends Controller
             if ($coverIndex !== null && (int) $coverIndex === $index) {
                 $property->images()->update(['is_cover' => false]);
                 $isCover = true;
-            } elseif (!$hasCover && $index === 0 && $existingCount === 0) {
+            } elseif (! $hasCover && $index === 0 && $existingCount === 0) {
                 $isCover = true;
             }
 
