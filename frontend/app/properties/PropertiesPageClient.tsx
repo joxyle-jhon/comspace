@@ -1,0 +1,336 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { AxiosError } from 'axios'
+import { SlidersHorizontal } from 'lucide-react'
+import Navbar from '@/components/layout/Navbar'
+import Footer from '@/components/layout/Footer'
+import PropertyCard, { Property } from '@/components/properties/PropertyCard'
+import PropertyCardSkeleton from '@/components/properties/PropertyCardSkeleton'
+import SearchBar, { PropertySearchValues } from '@/components/search/SearchBar'
+import { api } from '@/lib/api'
+
+interface PaginationMeta {
+  current_page: number
+  last_page: number
+  per_page: number
+  total: number
+}
+
+interface PropertySearchResponse {
+  data: Property[]
+  meta: PaginationMeta
+}
+
+const propertyTypes = [
+  { value: '', label: 'All types' },
+  { value: 'apartment', label: 'Apartment' },
+  { value: 'house', label: 'House' },
+  { value: 'villa', label: 'Villa' },
+  { value: 'cabin', label: 'Cabin' },
+  { value: 'studio', label: 'Studio' },
+  { value: 'loft', label: 'Loft' },
+  { value: 'condo', label: 'Condo' },
+  { value: 'other', label: 'Other' },
+]
+
+const sortOptions = [
+  { value: 'created_at:desc', label: 'Newest' },
+  { value: 'price_per_night:asc', label: 'Price: low to high' },
+  { value: 'price_per_night:desc', label: 'Price: high to low' },
+  { value: 'average_rating:desc', label: 'Top rated' },
+]
+
+export function PropertiesPageClient() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const queryString = searchParams.toString()
+  const [result, setResult] = useState<PropertySearchResponse | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [type, setType] = useState(searchParams.get('type') ?? '')
+  const [minPrice, setMinPrice] = useState(searchParams.get('min_price') ?? '')
+  const [maxPrice, setMaxPrice] = useState(searchParams.get('max_price') ?? '')
+  const [instantBook, setInstantBook] = useState(searchParams.get('instant_book') === '1')
+  const [sort, setSort] = useState(
+    `${searchParams.get('sort') ?? 'created_at'}:${searchParams.get('dir') ?? 'desc'}`,
+  )
+
+  useEffect(() => {
+    let cancelled = false
+
+    api
+      .get<PropertySearchResponse>(`/properties${queryString ? `?${queryString}` : ''}`)
+      .then((response) => {
+        if (cancelled) return
+        setResult(response.data)
+        setError(null)
+      })
+      .catch((requestError: unknown) => {
+        if (cancelled) return
+
+        const message =
+          requestError instanceof AxiosError
+            ? requestError.response?.data?.error?.message
+            : null
+
+        setError(message ?? 'Could not load properties. Please try again.')
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [queryString])
+
+  const navigate = (params: URLSearchParams) => {
+    setIsLoading(true)
+    router.push(`/properties${params.size ? `?${params.toString()}` : ''}`)
+  }
+
+  const handleSearch = (values: PropertySearchValues) => {
+    const params = new URLSearchParams(searchParams.toString())
+    const mappings: Array<[string, string]> = [
+      ['location', values.location.trim()],
+      ['check_in', values.checkIn],
+      ['check_out', values.checkOut],
+      ['guests', values.guests > 1 ? String(values.guests) : ''],
+    ]
+
+    mappings.forEach(([key, value]) => {
+      if (value) params.set(key, value)
+      else params.delete(key)
+    })
+
+    params.delete('page')
+    navigate(params)
+  }
+
+  const applyFilters = () => {
+    const params = new URLSearchParams(searchParams.toString())
+    const [sortField, direction] = sort.split(':')
+
+    if (type) params.set('type', type)
+    else params.delete('type')
+
+    if (minPrice) params.set('min_price', String(Math.round(Number(minPrice) * 100)))
+    else params.delete('min_price')
+
+    if (maxPrice) params.set('max_price', String(Math.round(Number(maxPrice) * 100)))
+    else params.delete('max_price')
+
+    if (instantBook) params.set('instant_book', '1')
+    else params.delete('instant_book')
+
+    params.set('sort', sortField)
+    params.set('dir', direction)
+    params.delete('page')
+    navigate(params)
+  }
+
+  const clearFilters = () => {
+    setType('')
+    setMinPrice('')
+    setMaxPrice('')
+    setInstantBook(false)
+    setSort('created_at:desc')
+
+    const params = new URLSearchParams(searchParams.toString())
+    ;['type', 'min_price', 'max_price', 'instant_book', 'sort', 'dir', 'page'].forEach((key) =>
+      params.delete(key),
+    )
+    navigate(params)
+  }
+
+  const changePage = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('page', String(page))
+    navigate(params)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const initialSearchValues: Partial<PropertySearchValues> = {
+    location: searchParams.get('location') ?? '',
+    checkIn: searchParams.get('check_in') ?? '',
+    checkOut: searchParams.get('check_out') ?? '',
+    guests: Number(searchParams.get('guests') ?? 1),
+  }
+
+  return (
+    <>
+      <Navbar />
+      <main className="min-h-screen bg-slate-50 pb-20 pt-28">
+        <section className="border-b border-slate-200 bg-white">
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            <SearchBar initialValues={initialSearchValues} onSearch={handleSearch} />
+          </div>
+        </section>
+
+        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+          <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
+            <aside className="h-fit rounded-3xl border border-slate-200 bg-white p-6 lg:sticky lg:top-28">
+              <div className="mb-6 flex items-center gap-2">
+                <SlidersHorizontal className="h-5 w-5 text-brand-primary" />
+                <h2 className="font-heading text-lg font-bold text-slate-900">Filters</h2>
+              </div>
+
+              <div className="space-y-5">
+                <div>
+                  <label htmlFor="property-type" className="mb-2 block text-sm font-semibold text-slate-700">
+                    Property type
+                  </label>
+                  <select
+                    id="property-type"
+                    value={type}
+                    onChange={(event) => setType(event.target.value)}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm"
+                  >
+                    {propertyTypes.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label htmlFor="min-price" className="mb-2 block text-sm font-semibold text-slate-700">
+                      Min price
+                    </label>
+                    <input
+                      id="min-price"
+                      type="number"
+                      min="0"
+                      placeholder="$0"
+                      value={minPrice}
+                      onChange={(event) => setMinPrice(event.target.value)}
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="max-price" className="mb-2 block text-sm font-semibold text-slate-700">
+                      Max price
+                    </label>
+                    <input
+                      id="max-price"
+                      type="number"
+                      min="0"
+                      placeholder="Any"
+                      value={maxPrice}
+                      onChange={(event) => setMaxPrice(event.target.value)}
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm"
+                    />
+                  </div>
+                </div>
+
+                <label className="flex cursor-pointer items-center gap-3 text-sm font-semibold text-slate-700">
+                  <input
+                    type="checkbox"
+                    checked={instantBook}
+                    onChange={(event) => setInstantBook(event.target.checked)}
+                    className="h-4 w-4 rounded border-slate-300 text-brand-primary"
+                  />
+                  Instant book only
+                </label>
+
+                <div>
+                  <label htmlFor="property-sort" className="mb-2 block text-sm font-semibold text-slate-700">
+                    Sort by
+                  </label>
+                  <select
+                    id="property-sort"
+                    value={sort}
+                    onChange={(event) => setSort(event.target.value)}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm"
+                  >
+                    {sortOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={applyFilters}
+                  className="w-full rounded-full bg-brand-primary px-5 py-3 text-sm font-bold text-white"
+                >
+                  Apply filters
+                </button>
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="w-full text-sm font-semibold text-slate-500 hover:text-slate-900"
+                >
+                  Clear filters
+                </button>
+              </div>
+            </aside>
+
+            <section aria-live="polite">
+              <div className="mb-6 flex items-end justify-between gap-4">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wider text-brand-primary">Browse spaces</p>
+                  <h1 className="font-heading text-3xl font-black text-slate-900">
+                    {result ? `${result.meta.total} properties` : 'Properties'}
+                  </h1>
+                </div>
+              </div>
+
+              {isLoading ? (
+                <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                  {Array.from({ length: 6 }, (_, index) => (
+                    <PropertyCardSkeleton key={index} />
+                  ))}
+                </div>
+              ) : error ? (
+                <div className="rounded-3xl border border-red-100 bg-red-50 p-10 text-center text-red-700">
+                  {error}
+                </div>
+              ) : result && result.data.length > 0 ? (
+                <>
+                  <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                    {result.data.map((property) => (
+                      <PropertyCard key={property.id} property={property} />
+                    ))}
+                  </div>
+
+                  {result.meta.last_page > 1 && (
+                    <nav className="mt-10 flex flex-wrap justify-center gap-2" aria-label="Property pages">
+                      {Array.from({ length: result.meta.last_page }, (_, index) => index + 1).map((page) => (
+                        <button
+                          key={page}
+                          type="button"
+                          onClick={() => changePage(page)}
+                          aria-current={page === result.meta.current_page ? 'page' : undefined}
+                          className={`h-10 min-w-10 rounded-full px-3 text-sm font-bold ${
+                            page === result.meta.current_page
+                              ? 'bg-brand-primary text-white'
+                              : 'border border-slate-200 bg-white text-slate-600'
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                    </nav>
+                  )}
+                </>
+              ) : (
+                <div className="rounded-3xl border border-slate-200 bg-white p-12 text-center">
+                  <h2 className="font-heading text-xl font-bold text-slate-900">No properties found</h2>
+                  <p className="mt-2 text-sm text-slate-500">Try changing your dates or filters.</p>
+                </div>
+              )}
+            </section>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </>
+  )
+}
