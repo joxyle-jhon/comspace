@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\PropertyController;
 use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\HostController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Auth
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::get('/auth/me', [AuthController::class, 'me']);
+    Route::post('/auth/become-host', [AuthController::class, 'becomeHost']);
 
     // Properties — host actions
     Route::post('/properties', [PropertyController::class, 'store']);
@@ -52,4 +54,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Reviews
     Route::post('/bookings/{booking}/reviews', [ReviewController::class, 'store']);
     Route::post('/reviews/{review}/reply', [ReviewController::class, 'reply']);
+
+    // Host Stats
+    Route::get('/host/stats', [HostController::class, 'stats']);
 });

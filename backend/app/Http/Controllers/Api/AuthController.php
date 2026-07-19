@@ -68,4 +68,18 @@ class AuthController extends Controller
     {
         return response()->json(new UserResource($request->user()));
     }
+
+    public function becomeHost(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $user->update([
+            'role' => 'host',
+            'host_since' => now(),
+        ]);
+
+        return response()->json([
+            'message' => 'Role updated to host successfully.',
+            'user' => new UserResource($user),
+        ]);
+    }
 }

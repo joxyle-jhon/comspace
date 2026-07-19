@@ -67,9 +67,10 @@ export default function Navbar() {
               </Link>
             ) : (
               <Link
-                href="/#host-banner"
-                className="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
+                href="/host/become"
+                className="text-xs font-bold uppercase tracking-wider text-brand-primary bg-brand-light/35 border border-brand-light/75 hover:bg-brand-light/65 px-4 py-2 rounded-full transition-all flex items-center gap-1.5"
               >
+                <PlusCircle className="w-4 h-4" />
                 Host your space
               </Link>
             )}
@@ -114,14 +115,24 @@ export default function Navbar() {
                       </Link>
 
                       {user.role === 'host' && (
-                        <Link
-                          href="/host/properties"
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
-                          onClick={() => setDropdownOpen(false)}
-                        >
-                          <PlusCircle className="w-4 h-4" />
-                          Manage Properties
-                        </Link>
+                        <>
+                          <Link
+                            href="/host/dashboard"
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                            onClick={() => setDropdownOpen(false)}
+                          >
+                            <Home className="w-4 h-4" />
+                            Host Dashboard
+                          </Link>
+                          <Link
+                            href="/host/properties"
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                            onClick={() => setDropdownOpen(false)}
+                          >
+                            <PlusCircle className="w-4 h-4" />
+                            Manage Properties
+                          </Link>
+                        </>
                       )}
 
                       <button

@@ -22,8 +22,15 @@ class PropertyController extends Controller
     public function index(PropertySearchRequest $request): AnonymousResourceCollection
     {
         $filters = $request->validated();
-        $query = Property::published()
-            ->with(['images', 'amenities', 'host']);
+        $user = auth('sanctum')->user();
+
+        if ($request->boolean('my_properties') && $user) {
+            $query = Property::where('user_id', $user->id)
+                ->with(['images', 'amenities', 'host']);
+        } else {
+            $query = Property::published()
+                ->with(['images', 'amenities', 'host']);
+        }
 
         if ($location = $filters['location'] ?? null) {
             $query->where(function ($q) use ($location) {
