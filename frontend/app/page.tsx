@@ -10,7 +10,6 @@ import CategoryStrip from '@/components/home/CategoryStrip'
 import PropertyCard, { Property } from '@/components/properties/PropertyCard'
 import StatsSection from '@/components/home/StatsSection'
 import WhyComspace from '@/components/home/WhyComspace'
-import HostCTA from '@/components/home/HostCTA'
 import Footer from '@/components/layout/Footer'
 
 export default function Home() {
@@ -185,9 +184,6 @@ export default function Home() {
 
       {/* Confidence/Features Section */}
       <WhyComspace />
-
-      {/* Host CTA Banner */}
-      <HostCTA />
 
       <Footer />
     </>
