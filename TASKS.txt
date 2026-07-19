@@ -47,18 +47,19 @@ STATUS: DONE
     - File: backend/tests/Feature/AuthApiTest.php
 
 BRANCH: feature/backend-property-search
-PRIORITY: 1
+STATUS: DONE
 ------
-[ ] Implement full property search in PropertyController@index
+[x] Implement full property search in PropertyController@index
     - Filter by: location (city/country ILIKE), check_in/check_out, guests
     - Filter by: type, min_price, max_price, amenities[], instant_book
     - Sort by: price_per_night, average_rating, created_at
-    - Paginate: 12 per page (use Spatie Query Builder already installed)
+    - Paginate: 12 per page
     - Avoid N+1 — eager load: images, amenities, host (see SKILL.md DB rules)
+    - Validated with PropertySearchRequest and covered by feature tests
     - File: backend/app/Models/Property.php (scopes), PropertyController.php
 
 BRANCH: feature/backend-price-preview
-PRIORITY: 2
+PRIORITY: 1
 ------
 [ ] Add GET /api/properties/{id}/price-preview endpoint
     - Accepts: check_in, check_out query params
@@ -68,7 +69,7 @@ PRIORITY: 2
     - File: backend/routes/api.php, backend/app/Http/Controllers/Api/PropertyController.php
 
 BRANCH: feature/backend-image-upload
-PRIORITY: 3
+PRIORITY: 2
 ------
 [ ] Implement POST /api/properties/{id}/images endpoint
     - Accept multipart image uploads
@@ -79,7 +80,7 @@ PRIORITY: 3
     - File: backend/app/Http/Controllers/Api/PropertyController.php
 
 BRANCH: test/backend-booking-api
-PRIORITY: 4
+PRIORITY: 3
 ------
 [ ] Write Pest feature test: BookingApiTest
     - Test: guest can create booking (returns 201)
@@ -90,7 +91,7 @@ PRIORITY: 4
     - File: backend/tests/Feature/BookingApiTest.php
 
 BRANCH: feature/backend-availability-blocks
-PRIORITY: 5
+PRIORITY: 4
 ------
 [ ] Add POST /api/properties/{id}/availability endpoint (host only)
     - Allows hosts to block off dates (vacations, maintenance)
@@ -98,7 +99,7 @@ PRIORITY: 5
     - File: backend/app/Models/AvailabilityBlock.php
 
 BRANCH: feature/backend-review-reply
-PRIORITY: 6
+PRIORITY: 5
 ------
 [ ] Implement POST /api/reviews/{id}/reply endpoint
     - Allow host to reply to guest reviews on their property
@@ -108,7 +109,7 @@ PRIORITY: 6
     - File: backend/app/Policies/ReviewPolicy.php
 
 BRANCH: feature/backend-host-dashboard-api
-PRIORITY: 7
+PRIORITY: 6
 ------
 [ ] Add GET /api/host/stats endpoint
     - Returns: total_properties, total_bookings, total_revenue (cents),
@@ -254,12 +255,13 @@ BRANCH: feature/integrate-auth-flow
     - File: frontend/middleware.ts
 
 BRANCH: feature/integrate-property-api
+STATUS: DONE
 ------
-[ ] Connect PropertyCard to real API data (already wired via React Query)
+[x] Connect PropertyCard to real API data
     - Verify images load from backend storage URLs
     - Handle missing images with a fallback placeholder
-[ ] Add infinite scroll OR pagination to /properties page
-    - Currently pagination buttons exist but scroll-to-top behavior needs testing
+[x] Add infinite scroll OR pagination to /properties page
+    - Dedicated browse page includes search filters and pagination
 
 BRANCH: feature/integrate-stripe
 ------
