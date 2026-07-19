@@ -158,7 +158,7 @@ export default function DateRangePicker({ value, onChange }: DateRangePickerProp
 
       {/* Calendar Dropdown */}
       {isOpen && (
-        <div className="absolute left-0 mt-3 w-80 bg-white border border-slate-100 rounded-3xl shadow-2xl p-5 z-[9999] animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute left-0 z-40 mt-3 w-80 animate-in rounded-3xl border border-slate-100 bg-white p-5 shadow-2xl fade-in slide-in-from-top-2 duration-200">
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
             <h4 className="font-heading font-bold text-slate-800 text-sm">{monthName}</h4>

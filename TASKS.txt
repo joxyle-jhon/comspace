@@ -140,7 +140,12 @@ BRANCH: feature/frontend-auth-pages
     - Centered card layout with branding on the left (split screen)
 
 BRANCH: feature/frontend-property-detail
+STATUS: PARTIAL
 ------
+[~] Property details available via modal on card click
+    - Opens PropertyDetailModal with gallery, host, amenities, reviews
+    - Fetches GET /api/properties/{id}
+    - Full /app/properties/[id]/page.tsx detail route still optional later
 [ ] Build /app/properties/[id]/page.tsx
     - Fetch property with useQuery and propertyApi.get(id)
     - Image gallery: 5-photo grid (CSS grid, first photo spans 2 rows)
