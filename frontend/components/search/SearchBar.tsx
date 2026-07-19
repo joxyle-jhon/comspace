@@ -77,7 +77,7 @@ export default function SearchBar({ className, initialValues, onSearch }: Search
   return (
     <div
       className={cn(
-        'w-full bg-white rounded-3xl md:rounded-full border border-slate-200/80 shadow-2xl p-3 flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-0 relative z-[10000]',
+        'relative z-30 w-full bg-white rounded-3xl md:rounded-full border border-slate-200/80 shadow-2xl p-3 flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-0',
         className
       )}
       role="search"
