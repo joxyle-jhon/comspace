@@ -57,7 +57,7 @@ class Property extends Model
     /** Price in dollars for display */
     public function getPricePerNightFormattedAttribute(): string
     {
-        return '$' . number_format($this->price_per_night / 100, 2);
+        return '$'.number_format($this->price_per_night / 100, 2);
     }
 
     // ─── Relationships ────────────────────────────────────────────────────────
@@ -106,12 +106,12 @@ class Property extends Model
 
     public function scopeInCity(Builder $query, string $city): Builder
     {
-        return $query->whereRaw('LOWER(city) LIKE ?', ['%' . strtolower($city) . '%']);
+        return $query->whereRaw('LOWER(city) LIKE ?', ['%'.strtolower($city).'%']);
     }
 
     public function scopeInCountry(Builder $query, string $country): Builder
     {
-        return $query->whereRaw('LOWER(country) LIKE ?', ['%' . strtolower($country) . '%']);
+        return $query->whereRaw('LOWER(country) LIKE ?', ['%'.strtolower($country).'%']);
     }
 
     public function scopeForGuests(Builder $query, int $guests): Builder
@@ -126,7 +126,14 @@ class Property extends Model
 
     public function scopeWithAmenities(Builder $query, array $amenityIds): Builder
     {
-        return $query->whereHas('amenities', fn ($q) => $q->whereIn('amenities.id', $amenityIds));
+        $amenityIds = array_values(array_unique($amenityIds));
+
+        return $query->whereHas(
+            'amenities',
+            fn (Builder $amenities) => $amenities->whereIn('amenities.id', $amenityIds),
+            '=',
+            count($amenityIds),
+        );
     }
 
     /**
@@ -140,11 +147,11 @@ class Property extends Model
 
         return $query->whereDoesntHave('bookings', function (Builder $q) use ($checkIn, $checkOut) {
             $q->whereIn('status', ['confirmed', 'pending'])
-              ->whereDate('check_in', '<', $checkOut)
-              ->whereDate('check_out', '>', $checkIn);
+                ->whereDate('check_in', '<', $checkOut)
+                ->whereDate('check_out', '>', $checkIn);
         })->whereDoesntHave('availabilityBlocks', function (Builder $q) use ($checkIn, $checkOut) {
             $q->whereDate('blocked_from', '<', $checkOut)
-              ->whereDate('blocked_to', '>', $checkIn);
+                ->whereDate('blocked_to', '>', $checkIn);
         });
     }
 }
