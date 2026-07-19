@@ -7,21 +7,37 @@ import { cn } from '@/lib/utils'
 import DateRangePicker from './DateRangePicker'
 import GuestSelector from './GuestSelector'
 
-interface SearchBarProps {
-  className?: string
-  onSearch?: (params: any) => void
+export interface PropertySearchValues {
+  location: string
+  checkIn: string
+  checkOut: string
+  guests: number
 }
 
-export default function SearchBar({ className, onSearch }: SearchBarProps) {
+interface SearchBarProps {
+  className?: string
+  initialValues?: Partial<PropertySearchValues>
+  onSearch?: (params: PropertySearchValues) => void
+}
+
+function parseDate(value?: string) {
+  if (!value) return null
+
+  const [year, month, day] = value.split('-').map(Number)
+  const date = new Date(year, month - 1, day)
+
+  return Number.isNaN(date.getTime()) ? null : date
+}
+
+export default function SearchBar({ className, initialValues, onSearch }: SearchBarProps) {
   const router = useRouter()
-  const [location, setLocation] = useState('')
+  const [location, setLocation] = useState(initialValues?.location ?? '')
   const [dateRange, setDateRange] = useState<{ startDate: Date | null; endDate: Date | null }>({
-    startDate: null,
-    endDate: null,
+    startDate: parseDate(initialValues?.checkIn),
+    endDate: parseDate(initialValues?.checkOut),
   })
-  
-  // Guest counts
-  const [adults, setAdults] = useState(1)
+
+  const [adults, setAdults] = useState(initialValues?.guests ?? 1)
   const [kids, setKids] = useState(0)
   const [pets, setPets] = useState(0)
 
@@ -81,9 +97,12 @@ export default function SearchBar({ className, onSearch }: SearchBarProps) {
           <MapPin className="w-5 h-5" />
         </div>
         <div className="flex-1 min-w-0 flex flex-col text-left">
-          <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-0.5">
+          <label
+            htmlFor="search-location"
+            className="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-0.5"
+          >
             WHERE
-          </span>
+          </label>
           <input
             id="search-location"
             type="text"
