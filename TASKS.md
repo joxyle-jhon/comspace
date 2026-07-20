@@ -12,7 +12,7 @@
 ============================
 
 BRANCH: fix/backend-tests
-STATUS: DONE
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Fix failing Pest tests (SQLite driver missing)
     - Enable pdo_sqlite extension in php.ini (Laragon)
@@ -21,7 +21,7 @@ STATUS: DONE
     - File: backend/phpunit.xml, backend/tests/Pest.php
 
 BRANCH: feature/backend-auth-hardening
-STATUS: DONE
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Add request validation to AuthController (login, register)
     - Use FormRequest classes (e.g. LoginRequest, RegisterRequest)
@@ -36,7 +36,7 @@ STATUS: DONE
     - File: backend/app/Http/Controllers/Api/*.php
 
 BRANCH: test/backend-auth-api
-STATUS: DONE
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Write Pest feature test: AuthApiTest
     - Test: register with valid data returns token
@@ -47,7 +47,7 @@ STATUS: DONE
     - File: backend/tests/Feature/AuthApiTest.php
 
 BRANCH: feature/backend-property-search
-STATUS: DONE
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Implement full property search in PropertyController@index
     - Filter by: location (city/country ILIKE), check_in/check_out, guests
@@ -60,8 +60,9 @@ STATUS: DONE
 
 BRANCH: feature/backend-price-preview
 PRIORITY: 1
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Add GET /api/properties/{id}/price-preview endpoint
+[x] Add GET /api/properties/{id}/price-preview endpoint
     - Accepts: check_in, check_out query params
     - Returns: nights, price_per_night, subtotal, cleaning_fee,
                service_fee, total_amount (all in cents)
@@ -260,7 +261,7 @@ BRANCH: feature/integrate-auth-flow
     - File: frontend/middleware.ts
 
 BRANCH: feature/integrate-property-api
-STATUS: DONE
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Connect PropertyCard to real API data
     - Verify images load from backend storage URLs
