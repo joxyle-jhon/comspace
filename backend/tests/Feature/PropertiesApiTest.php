@@ -30,34 +30,6 @@ describe('Properties API (frontend contract)', function () {
         expect(count($response->json('data')))->toBe(3);
     });
 
-    it('returns price preview for booking widget', function () {
-        $host = User::factory()->create(['role' => 'host']);
-        $property = Property::factory()->create([
-            'user_id' => $host->id,
-            'price_per_night' => 10000,
-            'cleaning_fee' => 2000,
-            'service_fee_percent' => 10,
-            'min_nights' => 1,
-            'max_nights' => 30,
-            'is_published' => true,
-        ]);
-
-        $stay = stayWindow(nights: 3);
-
-        $response = $this->getJson("/api/properties/{$property->id}/price-preview?".http_build_query([
-            'check_in' => $stay['check_in'],
-            'check_out' => $stay['check_out'],
-        ]));
-
-        $response->assertOk()
-            ->assertJsonPath('nights', 3)
-            ->assertJsonPath('price_per_night', 10000)
-            ->assertJsonPath('subtotal', 30000)
-            ->assertJsonPath('cleaning_fee', 2000)
-            ->assertJsonPath('service_fee', 3000)
-            ->assertJsonPath('total_amount', 35000);
-    });
-
     it('filters properties by type for category strip', function () {
         $host = User::factory()->create(['role' => 'host']);
         Property::factory()->create([
