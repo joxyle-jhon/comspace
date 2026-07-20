@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PropertyPricePreviewRequest;
 use App\Http\Requests\PropertySearchRequest;
 use App\Http\Resources\PropertyImageResource;
 use App\Http\Resources\PropertyResource;
 use App\Models\Property;
 use App\Models\PropertyImage;
+use App\Services\BookingService;
 use App\Services\SupabaseStorageService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -88,6 +90,32 @@ class PropertyController extends Controller
         $property->load(['images', 'amenities', 'host', 'reviews.guest']);
 
         return new PropertyResource($property);
+    }
+
+    /**
+     * Preview booking price for a stay (no side effects).
+     */
+    public function pricePreview(
+        PropertyPricePreviewRequest $request,
+        Property $property,
+        BookingService $bookingService,
+    ): JsonResponse {
+        $data = $request->validated();
+
+        $pricing = $bookingService->calculatePrice(
+            $property,
+            $data['check_in'],
+            $data['check_out'],
+        );
+
+        return response()->json([
+            'nights' => $pricing['nights'],
+            'price_per_night' => $property->price_per_night,
+            'subtotal' => $pricing['subtotal'],
+            'cleaning_fee' => $pricing['cleaningFee'],
+            'service_fee' => $pricing['serviceFee'],
+            'total_amount' => $pricing['total'],
+        ]);
     }
 
     /**
