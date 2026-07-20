@@ -71,8 +71,9 @@ STATUS: <span style="color: #16a34a">DONE</span>
 
 BRANCH: feature/backend-image-upload
 PRIORITY: 2
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Implement POST /api/properties/{id}/images endpoint
+[x] Implement POST /api/properties/{id}/images endpoint
     - Accept multipart image uploads
     - Store in /storage/app/public/properties/{id}/
     - Run: php artisan storage:link
@@ -81,7 +82,8 @@ PRIORITY: 2
     - File: backend/app/Http/Controllers/Api/PropertyController.php
 
 BRANCH: test/backend-booking-api
-PRIORITY: 3
+PRIORITY: 1
+NEXT
 ------
 [ ] Write Pest feature test: BookingApiTest
     - Test: guest can create booking (returns 201)
@@ -92,7 +94,7 @@ PRIORITY: 3
     - File: backend/tests/Feature/BookingApiTest.php
 
 BRANCH: feature/backend-availability-blocks
-PRIORITY: 4
+PRIORITY: 2
 ------
 [ ] Add POST /api/properties/{id}/availability endpoint (host only)
     - Allows hosts to block off dates (vacations, maintenance)
@@ -100,7 +102,7 @@ PRIORITY: 4
     - File: backend/app/Models/AvailabilityBlock.php
 
 BRANCH: feature/backend-review-reply
-PRIORITY: 5
+PRIORITY: 3
 ------
 [ ] Implement POST /api/reviews/{id}/reply endpoint
     - Allow host to reply to guest reviews on their property
@@ -110,7 +112,7 @@ PRIORITY: 5
     - File: backend/app/Policies/ReviewPolicy.php
 
 BRANCH: feature/backend-host-dashboard-api
-PRIORITY: 6
+PRIORITY: 4
 ------
 [ ] Add GET /api/host/stats endpoint
     - Returns: total_properties, total_bookings, total_revenue (cents),
