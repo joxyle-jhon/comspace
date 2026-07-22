@@ -88,7 +88,7 @@ export default function Home() {
           {/* Curation Subtitle Badge */}
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FFF0EB] border border-[#FF5A1F]/20 text-[#FF5A1F] text-xs font-bold uppercase tracking-wider mb-6 shadow-sm">
             <Sparkles className="w-3.5 h-3.5" />
-            Curated stays for remote focus & travel
+            Handpicked homes & work-ready spaces
           </span>
 
           {/* Editorial Title */}
