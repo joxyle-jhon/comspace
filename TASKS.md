@@ -307,9 +307,9 @@ PRIORITY: 2
     - File: app/providers.tsx
 
 BRANCH: feature/frontend-responsive-audit
-PRIORITY: 3
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Audit and fix responsiveness on all pages
+[x] Audit and fix responsiveness on all pages
     - Test on: 375px (mobile), 768px (tablet), 1280px (desktop)
     - Fix: Navbar mobile drawer menu
     - Fix: SearchBar stacking layout on mobile
