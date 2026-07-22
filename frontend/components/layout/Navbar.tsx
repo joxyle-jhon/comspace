@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { LogOut, PlusCircle, Home, Menu, Shield, User as UserIcon, Sparkles, X } from 'lucide-react'
+import { ArrowRight, LogOut, PlusCircle, Home, Menu, Shield, User as UserIcon, Sparkles, X } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import Logo from './Logo'
 import { cn } from '@/lib/utils'
@@ -159,7 +159,7 @@ export default function Navbar() {
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="hidden md:flex items-center gap-3">
                 <Link
                   href="/auth/login"
                   className="text-xs font-bold text-slate-700 hover:text-slate-900 transition-colors px-3 py-2"
@@ -179,7 +179,8 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-xl text-slate-700 hover:bg-slate-100"
+              className="md:hidden p-2 rounded-xl text-slate-700 hover:bg-slate-100 transition-colors"
+              aria-label="Toggle mobile menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -189,47 +190,52 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white/98 backdrop-blur-xl border-b border-slate-200/80 px-6 py-6 space-y-3 animate-in slide-in-from-top duration-200 shadow-2xl">
+        <div className="md:hidden bg-white/98 backdrop-blur-xl border-b border-slate-200/80 px-5 py-5 space-y-2 animate-in slide-in-from-top duration-200 shadow-2xl">
           <Link
             href="/properties"
-            className="block text-sm font-bold text-slate-800 py-2.5 border-b border-slate-100"
+            className="flex items-center justify-between text-xs font-bold text-slate-800 py-2.5 border-b border-slate-100"
             onClick={() => setMobileMenuOpen(false)}
           >
-            Find Stays
+            <span>Find Stays</span>
+            <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
           </Link>
 
           {user ? (
             <>
               <Link
                 href="/bookings"
-                className="block text-sm font-bold text-slate-800 py-2.5 border-b border-slate-100"
+                className="flex items-center justify-between text-xs font-bold text-slate-800 py-2.5 border-b border-slate-100"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                My Reservations
+                <span>My Reservations</span>
+                <Shield className="w-3.5 h-3.5 text-slate-400" />
               </Link>
               <Link
                 href="/profile"
-                className="block text-sm font-bold text-slate-800 py-2.5 border-b border-slate-100"
+                className="flex items-center justify-between text-xs font-bold text-slate-800 py-2.5 border-b border-slate-100"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Profile Settings
+                <span>Profile Settings</span>
+                <UserIcon className="w-3.5 h-3.5 text-slate-400" />
               </Link>
 
               {user.role === 'host' ? (
                 <Link
                   href="/host/dashboard"
-                  className="block text-sm font-bold text-[#FF5A1F] py-2.5 border-b border-slate-100"
+                  className="flex items-center justify-between text-xs font-bold text-[#FF5A1F] py-2.5 border-b border-slate-100"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Host Dashboard
+                  <span>Host Dashboard</span>
+                  <Home className="w-3.5 h-3.5 text-[#FF5A1F]" />
                 </Link>
               ) : (
                 <Link
                   href="/host/become"
-                  className="block text-sm font-bold text-[#FF5A1F] py-2.5 border-b border-slate-100"
+                  className="flex items-center justify-between text-xs font-bold text-[#FF5A1F] py-2.5 border-b border-slate-100"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Host Your Space
+                  <span>Host Your Space</span>
+                  <PlusCircle className="w-3.5 h-3.5 text-[#FF5A1F]" />
                 </Link>
               )}
 
@@ -240,31 +246,33 @@ export default function Navbar() {
                   logout()
                   router.push('/')
                 }}
-                className="w-full text-left text-sm font-bold text-rose-600 py-2.5"
+                className="w-full text-left text-xs font-bold text-rose-600 py-2.5 flex items-center justify-between"
               >
-                Sign Out
+                <span>Sign Out</span>
+                <LogOut className="w-3.5 h-3.5 text-rose-500" />
               </button>
             </>
           ) : (
             <>
               <Link
                 href="/host/become"
-                className="block text-sm font-bold text-[#FF5A1F] py-2.5 border-b border-slate-100"
+                className="flex items-center justify-between text-xs font-bold text-[#FF5A1F] py-2.5 border-b border-slate-100"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Host Your Space
+                <span>Host Your Space</span>
+                <PlusCircle className="w-3.5 h-3.5 text-[#FF5A1F]" />
               </Link>
-              <div className="pt-2 flex flex-col gap-2">
+              <div className="pt-3 flex items-center gap-3">
                 <Link
                   href="/auth/login"
-                  className="w-full text-center py-2.5 rounded-full border border-slate-200 text-xs font-bold text-slate-800"
+                  className="flex-1 text-center py-2.5 rounded-full border border-slate-200 text-xs font-bold text-slate-800 hover:bg-slate-50 transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="w-full text-center py-2.5 rounded-full gradient-bg text-white text-xs font-bold uppercase tracking-wider"
+                  className="flex-1 text-center py-2.5 rounded-full gradient-bg text-white text-xs font-bold uppercase tracking-wider shadow-sm"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Get Started
