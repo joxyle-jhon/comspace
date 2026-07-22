@@ -317,10 +317,35 @@ PRIORITY: 3
 
 
 ============================
-  SHARED / DEVOPS
+  DEVOPS & INFRASTRUCTURE
 ============================
 
+BRANCH: devops/docker-containerization
+PRIORITY: 1
+------
+[ ] Create Docker containerization setup for full stack development & production
+    - backend/Dockerfile: Multi-stage PHP 8.2-fpm + Nginx + Composer
+    - frontend/Dockerfile: Multi-stage Node 20 runner for Next.js
+    - docker-compose.yml: Orchestrate Laravel API, Next.js frontend, PostgreSQL, Redis, and Mailpit
+    - Add .dockerignore for both frontend and backend
+
+BRANCH: devops/cicd-pipeline
+PRIORITY: 2
+------
+[ ] Build GitHub Actions CI/CD workflows (.github/workflows/)
+    - ci-backend.yml: Run phpunit / pest tests, pint linting, and database migration checks on PR
+    - ci-frontend.yml: Run npm run lint and npm run build on PR
+    - cd-deploy.yml: Automated production deployment trigger (Render / Vercel / VPS)
+
+BRANCH: devops/queue-and-[#16a34a]stripe-listeners
+PRIORITY: 3
+------
+[ ] Configure background Queue Workers and Webhook Listeners
+    - Configure Supervisor / Docker container entrypoint for `php artisan queue:work`
+    - Set up local Stripe CLI webhook listener forwarding (`stripe listen --forward-to localhost:8000/api/webhooks/stripe`)
+
 BRANCH: chore/env-example-update
+PRIORITY: 4
 ------
 [ ] Update backend/.env.example with all required keys
     - DB_*, REDIS_*, SANCTUM_*, STRIPE_*, GOOGLE_*, SUPABASE_*
@@ -328,6 +353,7 @@ BRANCH: chore/env-example-update
     - NEXT_PUBLIC_API_URL, NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY, NEXT_PUBLIC_GOOGLE_CLIENT_ID
 
 BRANCH: chore/database-seeder
+PRIORITY: 5
 ------
 [ ] Build DatabaseSeeder with realistic demo data
     - 2 host users, 1 guest user
@@ -336,6 +362,7 @@ BRANCH: chore/database-seeder
     - File: backend/database/seeders/DatabaseSeeder.php
 
 BRANCH: docs/api-documentation
+PRIORITY: 6
 ------
 [ ] Document all API endpoints in backend/API.md
     - Method, URL, Auth required, Request body, Response example
