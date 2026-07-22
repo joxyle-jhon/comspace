@@ -12,7 +12,7 @@
 ============================
 
 BRANCH: fix/backend-tests
-STATUS: DONE
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Fix failing Pest tests (SQLite driver missing)
     - Enable pdo_sqlite extension in php.ini (Laragon)
@@ -21,7 +21,7 @@ STATUS: DONE
     - File: backend/phpunit.xml, backend/tests/Pest.php
 
 BRANCH: feature/backend-auth-hardening
-STATUS: DONE
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Add request validation to AuthController (login, register)
     - Use FormRequest classes (e.g. LoginRequest, RegisterRequest)
@@ -58,7 +58,7 @@ PRIORITY: 2
     - File: backend/tests/Feature/AuthApiTest.php
 
 BRANCH: feature/backend-property-search
-STATUS: DONE
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Implement full property search in PropertyController@index
     - Filter by: location (city/country ILIKE), check_in/check_out, guests
@@ -70,7 +70,7 @@ STATUS: DONE
     - File: backend/app/Models/Property.php (scopes), PropertyController.php
 
 BRANCH: feature/backend-price-preview
-STATUS: DONE
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Add GET /api/properties/{id}/price-preview endpoint
     - Accepts: check_in, check_out query params
@@ -80,7 +80,7 @@ STATUS: DONE
     - File: backend/routes/api.php, backend/app/Http/Controllers/Api/BookingController.php
 
 BRANCH: feature/backend-image-upload
-STATUS: DONE
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Implement POST /api/properties/{id}/images endpoint
     - Accept multipart image uploads
@@ -90,7 +90,7 @@ STATUS: DONE
     - File: backend/app/Http/Controllers/Api/PropertyController.php
 
 BRANCH: feature/backend-review-reply
-STATUS: DONE
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Implement POST /api/reviews/{id}/reply endpoint
     - Allow host to reply to guest reviews on their property
@@ -100,7 +100,7 @@ STATUS: DONE
     - File: backend/app/Policies/ReviewPolicy.php
 
 BRANCH: feature/backend-host-dashboard-api
-STATUS: DONE
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Add GET /api/host/stats endpoint
     - Returns: total_properties, total_bookings, total_revenue (cents),
@@ -159,7 +159,7 @@ STATUS: PARTIAL
     - Centered card layout with branding on the left (split screen)
 
 BRANCH: feature/frontend-property-detail
-STATUS: DONE
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Property details available via modal on card click
     - Opens PropertyDetailModal with gallery, host, amenities, reviews
@@ -173,7 +173,7 @@ STATUS: DONE
     - Skeleton loaders for all sections
 
 BRANCH: feature/frontend-booking-widget
-STATUS: DONE
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Build BookingWidget component (shown on property detail page)
     - Date picker: check-in / check-out (inline calendar or date inputs)
@@ -216,7 +216,7 @@ PRIORITY: 4
     - File: components/booking/ReviewModal.tsx
 
 BRANCH: feature/frontend-host-dashboard
-STATUS: DONE
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Build /app/host/dashboard/page.tsx
     - Stats cards: Total Revenue, Active Bookings, Properties Listed, Avg Rating
@@ -225,7 +225,7 @@ STATUS: DONE
     - Upcoming arrivals list
 
 BRANCH: feature/frontend-host-property-management
-STATUS: DONE
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Build /app/host/properties/page.tsx
     - List host properties with edit/delete/publish toggle
@@ -243,7 +243,7 @@ PRIORITY: 5
     - Change password section
 
 BRANCH: feature/frontend-footer
-STATUS: DONE
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Build Footer component
     - Four columns: About Comspace, Support, Hosting, Legal
@@ -271,7 +271,7 @@ STATUS: PARTIAL
     - File: frontend/middleware.ts
 
 BRANCH: feature/integrate-property-api
-STATUS: DONE
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Connect PropertyCard to real API data
     - Verify images load from backend / Supabase storage URLs

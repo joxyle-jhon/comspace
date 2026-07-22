@@ -29,41 +29,15 @@ class BookingController extends Controller
     }
 
     /**
-     * Get a price preview before booking (no side effects).
-     */
-    public function previewPrice(Request $request, Property $property): JsonResponse
-    {
-        $data = $request->validate([
-            'check_in'  => ['required', 'date', 'after_or_equal:today'],
-            'check_out' => ['required', 'date', 'after:check_in'],
-        ]);
-
-        $pricing = $this->bookingService->calculatePrice(
-            $property,
-            $data['check_in'],
-            $data['check_out']
-        );
-
-        return response()->json([
-            'nights'          => $pricing['nights'],
-            'price_per_night' => $property->price_per_night,
-            'subtotal'        => $pricing['subtotal'],
-            'cleaning_fee'    => $pricing['cleaningFee'],
-            'service_fee'     => $pricing['serviceFee'],
-            'total_amount'    => $pricing['total'],
-        ]);
-    }
-
-    /**
      * Create a new booking.
      */
     public function store(Request $request, Property $property): JsonResponse
     {
         $data = $request->validate([
-            'check_in'    => ['required', 'date', 'after_or_equal:today'],
-            'check_out'   => ['required', 'date', 'after:check_in'],
+            'check_in' => ['required', 'date', 'after_or_equal:today'],
+            'check_out' => ['required', 'date', 'after:check_in'],
             'guest_count' => ['required', 'integer', 'min:1'],
-            'guest_note'  => ['nullable', 'string', 'max:1000'],
+            'guest_note' => ['nullable', 'string', 'max:1000'],
         ]);
 
         $booking = $this->bookingService->createBooking(
@@ -103,9 +77,9 @@ class BookingController extends Controller
         ]);
 
         $booking->update([
-            'status'               => 'cancelled',
-            'cancellation_reason'  => $data['reason'] ?? null,
-            'cancelled_at'         => now(),
+            'status' => 'cancelled',
+            'cancellation_reason' => $data['reason'] ?? null,
+            'cancelled_at' => now(),
         ]);
 
         return response()->json(['message' => 'Booking cancelled.', 'booking' => new BookingResource($booking)]);

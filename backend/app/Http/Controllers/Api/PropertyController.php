@@ -3,16 +3,18 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PropertyImageUploadRequest;
+use App\Http\Requests\PropertyPricePreviewRequest;
 use App\Http\Requests\PropertySearchRequest;
 use App\Http\Resources\PropertyImageResource;
 use App\Http\Resources\PropertyResource;
 use App\Models\Property;
 use App\Models\PropertyImage;
-use App\Services\SupabaseStorageService;
+use App\Services\BookingService;
+use App\Services\PropertyImageStorageService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Validation\ValidationException;
 
 class PropertyController extends Controller
 {
@@ -88,6 +90,32 @@ class PropertyController extends Controller
         $property->load(['images', 'amenities', 'host', 'reviews.guest']);
 
         return new PropertyResource($property);
+    }
+
+    /**
+     * Preview booking price for a stay (no side effects).
+     */
+    public function pricePreview(
+        PropertyPricePreviewRequest $request,
+        Property $property,
+        BookingService $bookingService,
+    ): JsonResponse {
+        $data = $request->validated();
+
+        $pricing = $bookingService->calculatePrice(
+            $property,
+            $data['check_in'],
+            $data['check_out'],
+        );
+
+        return response()->json([
+            'nights' => $pricing['nights'],
+            'price_per_night' => $property->price_per_night,
+            'subtotal' => $pricing['subtotal'],
+            'cleaning_fee' => $pricing['cleaningFee'],
+            'service_fee' => $pricing['serviceFee'],
+            'total_amount' => $pricing['total'],
+        ]);
     }
 
     /**
@@ -194,39 +222,23 @@ class PropertyController extends Controller
     }
 
     /**
-     * Upload property images to Supabase Storage (host only, max 10 total).
+     * Upload property images to public storage (host only, max 10 total).
      */
     public function uploadImages(
-        Request $request,
+        PropertyImageUploadRequest $request,
         Property $property,
-        SupabaseStorageService $storage
+        PropertyImageStorageService $storage,
     ): JsonResponse {
-        $this->authorize('update', $property);
-
-        $data = $request->validate([
-            'images' => ['required', 'array', 'min:1'],
-            'images.*' => ['file', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-            'captions' => ['sometimes', 'array'],
-            'captions.*' => ['nullable', 'string', 'max:255'],
-            'cover_index' => ['sometimes', 'integer', 'min:0'],
-        ]);
+        $data = $request->validated();
 
         $existingCount = $property->images()->count();
-        $incomingCount = count($data['images']);
-
-        if ($existingCount + $incomingCount > 10) {
-            throw ValidationException::withMessages([
-                'images' => 'A property may have at most 10 images.',
-            ]);
-        }
-
         $startOrder = (int) $property->images()->max('sort_order');
         $created = [];
         $coverIndex = $data['cover_index'] ?? null;
         $hasCover = $property->images()->where('is_cover', true)->exists();
 
         foreach ($data['images'] as $index => $file) {
-            $url = $storage->upload($file, "properties/{$property->id}");
+            $url = $storage->upload($file, $property->id);
 
             $isCover = false;
             if ($coverIndex !== null && (int) $coverIndex === $index) {

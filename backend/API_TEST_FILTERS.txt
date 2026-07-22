@@ -1,0 +1,438 @@
+Comspace API — Manual Test Filters
+==================================
+
+Base URL (local): http://127.0.0.1:8000/api
+
+Use this file when manually testing filters with curl, Postman, or the browser.
+All prices are in cents unless noted otherwise.
+
+Start the server:
+  cd backend
+  php artisan serve
+
+
+================================================================================
+AUTOMATED TESTS (run from backend/)
+================================================================================
+
+Property search & browse filters
+  php artisan test --filter=PropertySearchApiTest
+
+Properties frontend contract (list + type filter)
+  php artisan test --filter=PropertiesApiTest
+
+Price preview endpoint
+  php artisan test --filter=PropertyPricePreviewApiTest
+
+Price math (BookingService unit of pricing)
+  php artisan test --filter="calculates price correctly"
+
+Property image upload
+  php artisan test --filter=PropertyImageUploadTest
+
+Booking conflict / stay rules
+  php artisan test --filter=BookingConflictTest
+
+Host dashboard stats
+  php artisan test --filter=HostApiTest
+
+Full suite (everything)
+  php artisan test
+
+
+================================================================================
+1. GET /properties — Property search & browse
+================================================================================
+
+Endpoint:
+  GET /api/properties
+
+Auth:
+  Public (optional Sanctum token for my_properties)
+
+Pagination:
+  Fixed at 12 results per page. Use page=2, page=3, etc.
+
+--------------------------------------------------------------------------------
+Query filters
+--------------------------------------------------------------------------------
+
+location
+  Type:     string (max 255)
+  Required: no
+  Matches:  city OR country (case-insensitive partial match)
+  Example:  ?location=singapore
+
+check_in
+  Type:     date (Y-m-d)
+  Required: required when check_out is present
+  Rule:     must be today or later
+  Example:  ?check_in=2026-09-01
+
+check_out
+  Type:     date (Y-m-d)
+  Required: required when check_in is present
+  Rule:     must be after check_in
+  Example:  ?check_out=2026-09-05
+  Behavior: excludes properties with overlapping bookings or host blocks
+
+guests
+  Type:     integer
+  Required: no
+  Range:    1–50
+  Behavior: property max_guests must be >= guests
+  Example:  ?guests=4
+
+type
+  Type:     string enum
+  Required: no
+  Allowed:  apartment | house | villa | cabin | studio | loft | condo | other
+  Example:  ?type=villa
+
+min_price
+  Type:     integer (cents)
+  Required: no
+  Range:    >= 0
+  Example:  ?min_price=5000
+
+max_price
+  Type:     integer (cents)
+  Required: no
+  Range:    >= 0, must be >= min_price when both are set
+  Example:  ?max_price=20000
+
+amenities[]
+  Type:     array of amenity IDs
+  Required: no
+  Rule:     each ID must exist in amenities table; property must have ALL listed amenities
+  Example:  ?amenities[]=1&amenities[]=3
+
+instant_book
+  Type:     boolean
+  Required: no
+  Allowed:  true | false | 1 | 0
+  Example:  ?instant_book=true
+
+sort
+  Type:     string enum
+  Required: no
+  Default:  created_at
+  Allowed:  price_per_night | average_rating | created_at
+  Example:  ?sort=price_per_night
+
+dir
+  Type:     string enum
+  Required: no
+  Default:  desc
+  Allowed:  asc | desc
+  Example:  ?dir=asc
+
+page
+  Type:     integer
+  Required: no
+  Range:    >= 1
+  Example:  ?page=2
+
+my_properties
+  Type:     boolean
+  Required: no
+  Auth:     requires Sanctum token; ignored for guests
+  Behavior: returns only properties owned by the logged-in host (includes unpublished)
+  Example:  ?my_properties=1
+  Header:   Authorization: Bearer <token>
+
+--------------------------------------------------------------------------------
+Example requests
+--------------------------------------------------------------------------------
+
+Browse all published properties:
+  GET /api/properties
+
+Full search:
+  GET /api/properties?location=singapore&guests=3&type=villa&min_price=10000&max_price=15000&instant_book=true
+
+Date availability:
+  GET /api/properties?check_in=2026-09-01&check_out=2026-09-05
+
+Amenities (ALL must match):
+  GET /api/properties?amenities[]=1&amenities[]=2
+
+Sort cheapest first:
+  GET /api/properties?sort=price_per_night&dir=asc
+
+Second page:
+  GET /api/properties?page=2
+
+PowerShell example:
+  curl.exe "http://127.0.0.1:8000/api/properties?location=singapore&type=villa&guests=3"
+
+Run automated tests:
+  php artisan test --filter=PropertySearchApiTest
+  php artisan test --filter=PropertiesApiTest
+
+--------------------------------------------------------------------------------
+Invalid cases to try (expect 422 VALIDATION_ERROR)
+--------------------------------------------------------------------------------
+
+  check_in in the past
+  check_out on or before check_in
+  check_in only (without check_out) — allowed; date filter not applied
+  type=castle
+  sort=title
+  min_price=10000&max_price=5000
+  guests=0 or guests=51
+  amenities[]=99999 (non-existent ID)
+
+
+================================================================================
+2. GET /properties/{id}/price-preview — Booking price preview
+================================================================================
+
+Endpoint:
+  GET /api/properties/{id}/price-preview
+
+Auth:
+  Public
+
+--------------------------------------------------------------------------------
+Query filters
+--------------------------------------------------------------------------------
+
+check_in
+  Type:     date (Y-m-d)
+  Required: yes
+  Rule:     must be today or later
+
+check_out
+  Type:     date (Y-m-d)
+  Required: yes
+  Rule:     must be after check_in
+
+--------------------------------------------------------------------------------
+Response fields (all cents)
+--------------------------------------------------------------------------------
+
+  nights
+  price_per_night
+  subtotal          = price_per_night * nights
+  cleaning_fee
+  service_fee       = round(subtotal * service_fee_percent / 100)
+  total_amount      = subtotal + cleaning_fee + service_fee
+
+Business rules (also return 422):
+  nights must be >= property min_nights
+  nights must be <= property max_nights
+
+--------------------------------------------------------------------------------
+Example requests
+--------------------------------------------------------------------------------
+
+Valid preview:
+  GET /api/properties/1/price-preview?check_in=2026-09-01&check_out=2026-09-04
+
+PowerShell example:
+  $in  = (Get-Date).AddDays(60).ToString("yyyy-MM-dd")
+  $out = (Get-Date).AddDays(63).ToString("yyyy-MM-dd")
+  curl.exe "http://127.0.0.1:8000/api/properties/1/price-preview?check_in=$in&check_out=$out"
+
+Sample math (property: $100/night, $20 cleaning, 10% service fee, 3 nights):
+  subtotal      = 30000
+  service_fee   = 3000
+  total_amount  = 35000
+
+Run automated tests:
+  php artisan test --filter=PropertyPricePreviewApiTest
+  php artisan test --filter="calculates price correctly"
+
+--------------------------------------------------------------------------------
+Invalid cases to try (expect 422)
+--------------------------------------------------------------------------------
+
+  missing check_in or check_out
+  check_in in the past
+  check_out <= check_in
+  stay shorter than min_nights
+  stay longer than max_nights
+  invalid property id (expect 404)
+
+
+================================================================================
+3. GET /properties/{id}/reviews — Property reviews
+================================================================================
+
+Endpoint:
+  GET /api/properties/{id}/reviews
+
+Auth:
+  Public
+
+Query filters:
+  page   integer >= 1   (Laravel pagination, 10 per page)
+
+Example:
+  GET /api/properties/1/reviews?page=1
+
+Run automated tests:
+  (no dedicated review list test yet)
+
+
+================================================================================
+4. POST /properties/{id}/images — Property image upload
+================================================================================
+
+Endpoint:
+  POST /api/properties/{property}/images
+
+Auth:
+  Required (Sanctum Bearer token)
+  Only the property owner (host) may upload
+
+Setup (one-time):
+  cd backend
+  php artisan storage:link
+
+Storage path:
+  storage/app/public/properties/{id}/
+  Public URL:  http://127.0.0.1:8000/storage/properties/{id}/{filename}
+
+--------------------------------------------------------------------------------
+Multipart body fields
+--------------------------------------------------------------------------------
+
+images[]
+  Type:     file array (multipart)
+  Required: yes (at least 1 file)
+  Allowed:  jpg, jpeg, png, webp
+  Max size: 5120 KB (5 MB) per file
+  Max total: 10 images per property (existing + new)
+
+captions[]
+  Type:     string array (optional)
+  Required: no
+  Max:      255 chars per caption
+  Example:  captions[]=Living room&captions[]=Pool view
+
+cover_index
+  Type:     integer (optional)
+  Required: no
+  Rule:     zero-based index of which uploaded file becomes the cover image
+  Example:  cover_index=0
+
+--------------------------------------------------------------------------------
+Response (201 Created)
+--------------------------------------------------------------------------------
+
+  data[]:
+    id
+    url          public URL (e.g. /storage/properties/1/uuid.jpg)
+    caption
+    sort_order
+    is_cover     true for cover image
+
+First upload auto-sets is_cover=true on the first image when none exists.
+
+--------------------------------------------------------------------------------
+Example requests
+--------------------------------------------------------------------------------
+
+Upload one image:
+  POST /api/properties/1/images
+  Header: Authorization: Bearer <host_token>
+  Body:   multipart/form-data with images[]=@photo.jpg
+
+Upload multiple with captions and cover:
+  POST /api/properties/1/images
+  images[]=@photo1.jpg
+  images[]=@photo2.jpg
+  captions[]=Front view
+  captions[]=Bedroom
+  cover_index=1
+
+PowerShell example:
+  curl.exe -X POST "http://127.0.0.1:8000/api/properties/1/images" `
+    -H "Authorization: Bearer YOUR_TOKEN" `
+    -H "Accept: application/json" `
+    -F "images[]=@C:\path\to\photo.jpg"
+
+Get a host token first (login):
+  curl.exe -X POST "http://127.0.0.1:8000/api/auth/login" `
+    -H "Accept: application/json" `
+    -H "Content-Type: application/json" `
+    -d "{\"email\":\"host@example.com\",\"password\":\"password\"}"
+
+Run automated tests:
+  php artisan test --filter=PropertyImageUploadTest
+
+--------------------------------------------------------------------------------
+Invalid cases to try
+--------------------------------------------------------------------------------
+
+  no Authorization header (expect 401)
+  guest token, not property owner (expect 403)
+  upload when property already has 10 images (expect 422 on images)
+  upload .pdf or .gif file (expect 422 on images.0)
+  empty images array / no files (expect 422)
+  file larger than 5 MB (expect 422)
+
+
+================================================================================
+5. Other endpoints with inputs (no query filters)
+================================================================================
+
+POST /auth/register
+  name, email, password, role (optional: guest|host)
+
+POST /auth/login
+  email, password
+
+POST /properties/{id}/bookings   (auth required)
+  check_in, check_out, guest_count, guest_note (optional)
+
+PATCH /properties/{id}/publish   (auth required)
+  published (boolean)
+
+PATCH /bookings/{id}/cancel      (auth required)
+  reason (optional string)
+
+POST /bookings/{id}/reviews      (auth required)
+  rating, comment, ratings.cleanliness, ratings.accuracy, etc.
+
+POST /reviews/{id}/reply         (auth required)
+  host_reply
+
+Run automated tests:
+  php artisan test --filter=BookingConflictTest
+  php artisan test --filter=HostApiTest
+
+
+================================================================================
+6. Quick setup for manual testing
+================================================================================
+
+One-time storage link:
+  cd backend
+  php artisan storage:link
+
+Create a host and property in Tinker:
+
+  php artisan tinker
+
+  $host = \App\Models\User::factory()->create(['role' => 'host']);
+  $property = \App\Models\Property::factory()->create([
+      'user_id' => $host->id,
+      'city' => 'Singapore',
+      'country' => 'Singapore',
+      'type' => 'villa',
+      'max_guests' => 4,
+      'price_per_night' => 10000,
+      'cleaning_fee' => 2000,
+      'service_fee_percent' => 10,
+      'min_nights' => 1,
+      'max_nights' => 30,
+      'instant_book' => true,
+      'is_published' => true,
+  ]);
+  $property->id;
+
+Run automated tests:
+  (see AUTOMATED TESTS summary at the top of this file)

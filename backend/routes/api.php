@@ -2,9 +2,9 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookingController;
+use App\Http\Controllers\Api\HostController;
 use App\Http\Controllers\Api\PropertyController;
 use App\Http\Controllers\Api\ReviewController;
-use App\Http\Controllers\Api\HostController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,7 +26,7 @@ Route::get('/properties/{property}/reviews', [ReviewController::class, 'index'])
     ->withoutMiddleware(['auth:sanctum']);
 
 // Price preview (public — guests check price before logging in)
-Route::get('/properties/{property}/price-preview', [BookingController::class, 'previewPrice']);
+Route::get('/properties/{property}/price-preview', [PropertyController::class, 'pricePreview']);
 
 // ─── Authenticated Routes ───────────────────────────────────────────────────
 
