@@ -280,4 +280,20 @@ export const authApi = {
     const res = await api.post('/auth/become-host')
     return res.data
   },
+
+  /**
+   * Update current user profile details.
+   */
+  updateProfile: async (data: { name: string; email: string }): Promise<{ message: string; user: AuthUser }> => {
+    const res = await api.put('/auth/profile', data)
+    return res.data
+  },
+
+  /**
+   * Change current user password.
+   */
+  updatePassword: async (data: { current_password: string; password: string; password_confirmation: string }): Promise<{ message: string }> => {
+    const res = await api.put('/auth/password', data)
+    return res.data
+  },
 }
