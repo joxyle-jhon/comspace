@@ -47,7 +47,7 @@ export default function Navbar() {
               Find Stays
             </Link>
             <Link
-              href="/#why-heading"
+              href="/about"
               className="text-sm font-semibold text-slate-700 hover:text-[#FF5A1F] transition-colors"
             >
               Why Comspace

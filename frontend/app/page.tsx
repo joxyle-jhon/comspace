@@ -8,8 +8,6 @@ import Navbar from '@/components/layout/Navbar'
 import SearchBar, { PropertySearchValues } from '@/components/search/SearchBar'
 import CategoryStrip from '@/components/home/CategoryStrip'
 import PropertyCard, { Property } from '@/components/properties/PropertyCard'
-import StatsSection from '@/components/home/StatsSection'
-import WhyComspace from '@/components/home/WhyComspace'
 import Footer from '@/components/layout/Footer'
 
 export default function Home() {
@@ -174,12 +172,6 @@ export default function Home() {
           )}
         </div>
       </main>
-
-      {/* Trust Metrics Section */}
-      <StatsSection />
-
-      {/* Confidence/Features Section */}
-      <WhyComspace />
 
       <Footer />
     </>

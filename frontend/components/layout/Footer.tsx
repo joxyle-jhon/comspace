@@ -81,18 +81,18 @@ export default function Footer() {
             <h4 className="font-heading font-bold text-xs uppercase tracking-wider text-slate-900">About</h4>
             <ul className="space-y-2 text-xs font-medium text-slate-600">
               <li>
-                <Link href="/#why-heading" className="hover:text-[#FF5A1F] transition-colors">
+                <Link href="/about" className="hover:text-[#FF5A1F] transition-colors">
                   Our Mission
                 </Link>
               </li>
               <li>
-                <Link href="/#why-heading" className="hover:text-[#FF5A1F] transition-colors">
+                <Link href="/about" className="hover:text-[#FF5A1F] transition-colors">
                   Trust & Safety
                 </Link>
               </li>
               <li>
-                <Link href="/#why-heading" className="hover:text-[#FF5A1F] transition-colors">
-                  Support Center
+                <Link href="/about" className="hover:text-[#FF5A1F] transition-colors">
+                  Why Comspace
                 </Link>
               </li>
             </ul>
