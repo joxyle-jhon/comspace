@@ -77,7 +77,7 @@ export default function SearchBar({ className, initialValues, onSearch }: Search
   return (
     <div
       className={cn(
-        'relative z-30 w-full bg-white rounded-3xl md:rounded-full border border-slate-200/80 shadow-2xl p-3 flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-0',
+        'relative z-30 w-full bg-white rounded-3xl md:rounded-full border border-slate-200/90 shadow-xl shadow-slate-900/5 p-2 sm:p-3 flex flex-col md:flex-row items-stretch md:items-center gap-2 md:gap-0 transition-all focus-within:ring-2 focus-within:ring-[#FF5A1F]/30',
         className
       )}
       role="search"
@@ -85,7 +85,7 @@ export default function SearchBar({ className, initialValues, onSearch }: Search
       {/* WHERE field */}
       <div
         className={cn(
-          'flex-1 flex items-center gap-3 px-5 py-2.5 rounded-2xl md:rounded-l-full cursor-pointer hover:bg-slate-50 transition-colors group',
+          'flex-1 flex items-center gap-3 px-4 sm:px-5 py-2.5 rounded-2xl md:rounded-l-full cursor-pointer hover:bg-slate-50/80 transition-colors group',
           activeField === 'location' && 'bg-slate-50'
         )}
         onClick={() => {
@@ -93,25 +93,25 @@ export default function SearchBar({ className, initialValues, onSearch }: Search
           document.getElementById('search-location')?.focus()
         }}
       >
-        <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-brand-light group-hover:text-brand-primary transition-colors shrink-0">
-          <MapPin className="w-5 h-5" />
+        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#FFF0EB] flex items-center justify-center text-[#FF5A1F] transition-colors shrink-0">
+          <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
         </div>
         <div className="flex-1 min-w-0 flex flex-col text-left">
           <label
             htmlFor="search-location"
             className="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-0.5"
           >
-            WHERE
+            WHERE TO
           </label>
           <input
             id="search-location"
             type="text"
-            placeholder="Anywhere"
+            placeholder="Search destination or city..."
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             onFocus={() => setActiveField('location')}
             onBlur={() => setTimeout(() => setActiveField(null), 200)}
-            className="w-full border-0 bg-transparent p-0 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:ring-0 focus:outline-none"
+            className="w-full border-0 bg-transparent p-0 text-xs sm:text-sm font-semibold text-slate-900 placeholder-slate-400 focus:ring-0 focus:outline-none"
           />
         </div>
       </div>
@@ -136,11 +136,11 @@ export default function SearchBar({ className, initialValues, onSearch }: Search
       {/* Search button */}
       <button
         onClick={handleSearch}
-        className="gradient-bg text-white h-14 w-full md:w-14 rounded-2xl md:rounded-full flex items-center justify-center hover:shadow-lg hover:shadow-brand-primary/30 transition-all duration-300 transform hover:scale-[1.03] active:scale-[0.97] shrink-0 gap-2 md:gap-0 font-bold"
+        className="gradient-bg text-white h-12 md:h-14 w-full md:w-14 rounded-2xl md:rounded-full flex items-center justify-center shadow-md shadow-[#FF5A1F]/25 hover:shadow-lg transition-all duration-300 transform active:scale-95 shrink-0 gap-2 md:gap-0 text-xs sm:text-sm font-bold uppercase tracking-wider md:normal-case"
         aria-label="Search properties"
       >
-        <Search className="w-5 h-5" />
-        <span className="md:hidden">Search Spaces</span>
+        <Search className="w-4 h-4 sm:w-5 sm:h-5" />
+        <span className="md:hidden">Find Stays</span>
       </button>
     </div>
   )

@@ -43,19 +43,19 @@ export default function GuestSelector({
       <div
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          'w-full flex items-center gap-3 px-5 py-2.5 rounded-2xl cursor-pointer hover:bg-slate-50 transition-colors group',
+          'w-full flex items-center gap-3 px-4 sm:px-5 py-2.5 rounded-2xl cursor-pointer hover:bg-slate-50/80 transition-colors group',
           isOpen && 'bg-slate-50'
         )}
       >
         <div className="flex items-center gap-3 min-w-0 flex-1">
-          <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-brand-light group-hover:text-brand-primary transition-colors shrink-0">
-            <Users className="w-5 h-5" />
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#FFF0EB] flex items-center justify-center text-[#FF5A1F] transition-colors shrink-0">
+            <Users className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
           <div className="flex-1 min-w-0 flex flex-col text-left">
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-0.5">
               WHO
             </span>
-            <span className="text-sm font-semibold text-slate-800 block truncate">
+            <span className="text-xs sm:text-sm font-semibold text-slate-900 block truncate">
               {guestLabel}
             </span>
           </div>
@@ -64,7 +64,7 @@ export default function GuestSelector({
 
       {/* Guest Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 z-40 mt-3 w-80 animate-in rounded-3xl border border-slate-100 bg-white p-5 shadow-2xl fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute right-0 z-50 mt-3 w-80 animate-in rounded-3xl border border-slate-100 bg-white p-5 shadow-2xl fade-in slide-in-from-top-2 duration-200">
           <div className="space-y-6">
             {/* Adults */}
             <div className="flex items-center justify-between">

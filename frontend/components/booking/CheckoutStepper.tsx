@@ -35,19 +35,19 @@ export default function CheckoutStepper({ currentStep }: CheckoutStepperProps) {
           return (
             <div key={step.number} className="relative z-10 flex flex-col items-center">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${
+                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-300 ${
                   isCompleted
-                    ? 'gradient-bg text-white shadow-md'
+                    ? 'gradient-bg text-white shadow-md shadow-[#FF5A1F]/20'
                     : isActive
-                    ? 'bg-slate-900 text-white ring-4 ring-slate-100 shadow-lg scale-110'
+                    ? 'bg-slate-900 text-white ring-4 ring-[#FFF0EB] shadow-lg scale-110'
                     : 'bg-white border-2 border-slate-300 text-slate-400'
                 }`}
               >
-                {isCompleted ? <Check className="w-5 h-5 text-white" /> : step.number}
+                {isCompleted ? <Check className="w-4 h-4 text-white" /> : step.number}
               </div>
               <span
-                className={`mt-2 text-xs font-bold uppercase tracking-wider transition-colors ${
-                  isActive ? 'text-slate-900' : isCompleted ? 'text-brand-primary' : 'text-slate-400'
+                className={`mt-2 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-center line-clamp-1 transition-colors ${
+                  isActive ? 'text-slate-900' : isCompleted ? 'text-[#FF5A1F]' : 'text-slate-400'
                 }`}
               >
                 {step.title}

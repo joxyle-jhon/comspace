@@ -276,9 +276,9 @@ export default function BookingWidget({ property }: BookingWidgetProps) {
           <span className="text-lg font-black text-slate-900">
             {property.pricing?.price_formatted || formatCents(property.pricing?.price_per_night || 0)}
           </span>
-          <span className="text-slate-500 text-xs font-medium"> / night</span>
-          {breakdown && !error && (
-            <p className="text-[11px] font-bold text-brand-primary">Total: {formatCents(breakdown.total_amount)}</p>
+          <span className="text-xs font-normal text-slate-500"> / night</span>
+          {breakdown && !activeError && (
+            <p className="text-[11px] font-bold text-[#FF5A1F]">Total: {formatCents(breakdown.total_amount)}</p>
           )}
         </div>
 

@@ -11,6 +11,8 @@ import PropertyCardSkeleton from '@/components/properties/PropertyCardSkeleton'
 import SearchBar, { PropertySearchValues } from '@/components/search/SearchBar'
 import { api } from '@/lib/api'
 
+import CustomSelect from '@/components/ui/CustomSelect'
+
 interface PaginationMeta {
   current_page: number
   last_page: number
@@ -162,8 +164,8 @@ export function PropertiesPageClient() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-slate-50 pb-20 pt-28">
-        <section className="border-b border-slate-200 bg-white">
+      <main className="min-h-screen bg-[#FDFBF9] pb-24 pt-28">
+        <section className="border-b border-slate-200/80 bg-white">
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <SearchBar initialValues={initialSearchValues} onSearch={handleSearch} />
           </div>
@@ -171,35 +173,24 @@ export function PropertiesPageClient() {
 
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
-            <aside className="h-fit rounded-3xl border border-slate-200 bg-white p-6 lg:sticky lg:top-28">
+            <aside className="h-fit rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm lg:sticky lg:top-28">
               <div className="mb-6 flex items-center gap-2">
-                <SlidersHorizontal className="h-5 w-5 text-brand-primary" />
+                <SlidersHorizontal className="h-5 w-5 text-[#FF5A1F]" />
                 <h2 className="font-heading text-lg font-bold text-slate-900">Filters</h2>
               </div>
 
               <div className="space-y-5">
-                <div>
-                  <label htmlFor="property-type" className="mb-2 block text-sm font-semibold text-slate-700">
-                    Property type
-                  </label>
-                  <select
-                    id="property-type"
-                    value={type}
-                    onChange={(event) => setType(event.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm"
-                  >
-                    {propertyTypes.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <CustomSelect
+                  label="Property Type"
+                  options={propertyTypes}
+                  value={type}
+                  onChange={setType}
+                />
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label htmlFor="min-price" className="mb-2 block text-sm font-semibold text-slate-700">
-                      Min price
+                    <label htmlFor="min-price" className="mb-2 block text-xs font-bold text-slate-700">
+                      Min Price
                     </label>
                     <input
                       id="min-price"
@@ -208,12 +199,12 @@ export function PropertiesPageClient() {
                       placeholder="$0"
                       value={minPrice}
                       onChange={(event) => setMinPrice(event.target.value)}
-                      className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm"
+                      className="w-full rounded-2xl border border-slate-200 px-3 py-2.5 text-xs font-semibold focus:ring-2 focus:ring-[#FF5A1F]"
                     />
                   </div>
                   <div>
-                    <label htmlFor="max-price" className="mb-2 block text-sm font-semibold text-slate-700">
-                      Max price
+                    <label htmlFor="max-price" className="mb-2 block text-xs font-bold text-slate-700">
+                      Max Price
                     </label>
                     <input
                       id="max-price"
@@ -222,52 +213,41 @@ export function PropertiesPageClient() {
                       placeholder="Any"
                       value={maxPrice}
                       onChange={(event) => setMaxPrice(event.target.value)}
-                      className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm"
+                      className="w-full rounded-2xl border border-slate-200 px-3 py-2.5 text-xs font-semibold focus:ring-2 focus:ring-[#FF5A1F]"
                     />
                   </div>
                 </div>
 
-                <label className="flex cursor-pointer items-center gap-3 text-sm font-semibold text-slate-700">
+                <label className="flex cursor-pointer items-center gap-3 text-xs font-bold text-slate-700">
                   <input
                     type="checkbox"
                     checked={instantBook}
                     onChange={(event) => setInstantBook(event.target.checked)}
-                    className="h-4 w-4 rounded border-slate-300 text-brand-primary"
+                    className="h-4 w-4 rounded border-slate-300 text-[#FF5A1F] focus:ring-[#FF5A1F]"
                   />
-                  Instant book only
+                  Instant Reserve Only
                 </label>
 
-                <div>
-                  <label htmlFor="property-sort" className="mb-2 block text-sm font-semibold text-slate-700">
-                    Sort by
-                  </label>
-                  <select
-                    id="property-sort"
-                    value={sort}
-                    onChange={(event) => setSort(event.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm"
-                  >
-                    {sortOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <CustomSelect
+                  label="Sort By"
+                  options={sortOptions}
+                  value={sort}
+                  onChange={setSort}
+                />
 
                 <button
                   type="button"
                   onClick={applyFilters}
-                  className="w-full rounded-full bg-brand-primary px-5 py-3 text-sm font-bold text-white"
+                  className="w-full rounded-full gradient-bg px-5 py-3 text-xs font-bold uppercase tracking-wider text-white shadow-md shadow-[#FF5A1F]/20 hover:shadow-lg transition-all"
                 >
-                  Apply filters
+                  Apply Filters
                 </button>
                 <button
                   type="button"
                   onClick={clearFilters}
-                  className="w-full text-sm font-semibold text-slate-500 hover:text-slate-900"
+                  className="w-full text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors"
                 >
-                  Clear filters
+                  Reset All Filters
                 </button>
               </div>
             </aside>
@@ -275,9 +255,9 @@ export function PropertiesPageClient() {
             <section aria-live="polite">
               <div className="mb-6 flex items-end justify-between gap-4">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-brand-primary">Browse spaces</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#FF5A1F]">Curated Selection</p>
                   <h1 className="font-heading text-3xl font-black text-slate-900">
-                    {result ? `${result.meta.total} properties` : 'Properties'}
+                    {result ? `${result.meta.total} Stays Available` : 'Available Stays'}
                   </h1>
                 </div>
               </div>
@@ -289,7 +269,7 @@ export function PropertiesPageClient() {
                   ))}
                 </div>
               ) : error ? (
-                <div className="rounded-3xl border border-red-100 bg-red-50 p-10 text-center text-red-700">
+                <div className="rounded-3xl border border-rose-200 bg-rose-50 p-10 text-center text-xs font-bold text-rose-700">
                   {error}
                 </div>
               ) : result && result.data.length > 0 ? (
@@ -308,10 +288,10 @@ export function PropertiesPageClient() {
                           type="button"
                           onClick={() => changePage(page)}
                           aria-current={page === result.meta.current_page ? 'page' : undefined}
-                          className={`h-10 min-w-10 rounded-full px-3 text-sm font-bold ${
+                          className={`h-10 min-w-10 rounded-full px-3 text-xs font-bold transition-all ${
                             page === result.meta.current_page
-                              ? 'bg-brand-primary text-white'
-                              : 'border border-slate-200 bg-white text-slate-600'
+                              ? 'gradient-bg text-white shadow-sm'
+                              : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                           }`}
                         >
                           {page}
@@ -321,9 +301,9 @@ export function PropertiesPageClient() {
                   )}
                 </>
               ) : (
-                <div className="rounded-3xl border border-slate-200 bg-white p-12 text-center">
-                  <h2 className="font-heading text-xl font-bold text-slate-900">No properties found</h2>
-                  <p className="mt-2 text-sm text-slate-500">Try changing your dates or filters.</p>
+                <div className="rounded-3xl border border-slate-200/80 bg-white p-12 text-center">
+                  <h2 className="font-heading text-xl font-bold text-slate-900">No stays found</h2>
+                  <p className="mt-2 text-xs text-slate-500">Try adjusting your dates or clearing search filters.</p>
                 </div>
               )}
             </section>

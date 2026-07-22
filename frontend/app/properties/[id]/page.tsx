@@ -137,12 +137,12 @@ export default function PropertyDetailPage({ params }: PageProps) {
     <>
       <Navbar />
 
-      <main className="min-h-screen pt-28 pb-24 bg-slate-50">
+      <main className="min-h-screen pt-28 pb-24 bg-[#FDFBF9]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header Row */}
           <div className="mb-6">
             <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-light/50 border border-brand-light text-brand-primary text-xs font-bold uppercase tracking-wider">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFF0EB] border border-[#FF5A1F]/20 text-[#FF5A1F] text-xs font-bold uppercase tracking-wider">
                 <Home className="w-3.5 h-3.5" />
                 {property.type}
               </span>
@@ -183,7 +183,7 @@ export default function PropertyDetailPage({ params }: PageProps) {
               )}
               <span>•</span>
               <div className="flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-brand-primary" />
+                <MapPin className="w-3.5 h-3.5 text-[#FF5A1F]" />
                 <span>
                   {property.location?.city}, {property.location?.country}
                 </span>
@@ -203,6 +203,12 @@ export default function PropertyDetailPage({ params }: PageProps) {
                 priority
               />
               <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors" />
+              <button
+                type="button"
+                className="md:hidden absolute bottom-3 right-3 px-3 py-1.5 rounded-full bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider"
+              >
+                View Photos ({galleryImages.length})
+              </button>
             </div>
 
             {/* Side Grid 2x2 */}
@@ -279,22 +285,22 @@ export default function PropertyDetailPage({ params }: PageProps) {
               {/* Capacity Highlights */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm text-center">
-                  <Users className="w-5 h-5 text-brand-primary mx-auto mb-2" />
+                  <Users className="w-5 h-5 text-[#FF5A1F] mx-auto mb-2" />
                   <span className="block text-xs text-slate-400 font-medium">Guests</span>
                   <span className="font-bold text-slate-900 text-sm">{property.capacity?.max_guests} max</span>
                 </div>
                 <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm text-center">
-                  <BedDouble className="w-5 h-5 text-brand-primary mx-auto mb-2" />
+                  <BedDouble className="w-5 h-5 text-[#FF5A1F] mx-auto mb-2" />
                   <span className="block text-xs text-slate-400 font-medium">Bedrooms</span>
                   <span className="font-bold text-slate-900 text-sm">{property.capacity?.bedrooms} rooms</span>
                 </div>
                 <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm text-center">
-                  <BedDouble className="w-5 h-5 text-brand-primary mx-auto mb-2" />
+                  <BedDouble className="w-5 h-5 text-[#FF5A1F] mx-auto mb-2" />
                   <span className="block text-xs text-slate-400 font-medium">Beds</span>
                   <span className="font-bold text-slate-900 text-sm">{property.capacity?.beds} beds</span>
                 </div>
                 <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm text-center">
-                  <Bath className="w-5 h-5 text-brand-primary mx-auto mb-2" />
+                  <Bath className="w-5 h-5 text-[#FF5A1F] mx-auto mb-2" />
                   <span className="block text-xs text-slate-400 font-medium">Bathrooms</span>
                   <span className="font-bold text-slate-900 text-sm">{property.capacity?.bathrooms} baths</span>
                 </div>
