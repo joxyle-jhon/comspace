@@ -262,24 +262,23 @@ STATUS: <span style="color: #16a34a">DONE</span>
     - File: components/layout/Footer.tsx (imported in app/page.tsx)
 
 BRANCH: feature/frontend-404-page
-STATUS: PENDING
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Build /app/not-found.tsx
+[x] Build /app/not-found.tsx
     - Friendly 404 message with link back to Browse
     - Use brand colors and heading typography
-
 
 ============================
   DEVELOPER 3 — INTEGRATION
 ============================
 
 BRANCH: feature/integrate-auth-flow
-STATUS: PARTIAL
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Wire Navbar to show correct state (guest vs host vs anonymous)
     - Uses useAuthStore from store/useAuthStore.ts
-[ ] Add route protection using Next.js middleware
-    - Redirect unauthenticated users away from /bookings, /host/*
+[x] Add route protection using Next.js middleware
+    - Redirect unauthenticated users away from /bookings, /host/*, /profile
     - File: frontend/middleware.ts
 
 BRANCH: feature/integrate-property-api
