@@ -11,6 +11,8 @@ import PropertyCardSkeleton from '@/components/properties/PropertyCardSkeleton'
 import SearchBar, { PropertySearchValues } from '@/components/search/SearchBar'
 import { api } from '@/lib/api'
 
+import CustomSelect from '@/components/ui/CustomSelect'
+
 interface PaginationMeta {
   current_page: number
   last_page: number
@@ -178,23 +180,12 @@ export function PropertiesPageClient() {
               </div>
 
               <div className="space-y-5">
-                <div>
-                  <label htmlFor="property-type" className="mb-2 block text-xs font-bold text-slate-700">
-                    Property Type
-                  </label>
-                  <select
-                    id="property-type"
-                    value={type}
-                    onChange={(event) => setType(event.target.value)}
-                    className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-semibold focus:ring-2 focus:ring-[#FF5A1F]"
-                  >
-                    {propertyTypes.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <CustomSelect
+                  label="Property Type"
+                  options={propertyTypes}
+                  value={type}
+                  onChange={setType}
+                />
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
@@ -237,23 +228,12 @@ export function PropertiesPageClient() {
                   Instant Reserve Only
                 </label>
 
-                <div>
-                  <label htmlFor="property-sort" className="mb-2 block text-xs font-bold text-slate-700">
-                    Sort By
-                  </label>
-                  <select
-                    id="property-sort"
-                    value={sort}
-                    onChange={(event) => setSort(event.target.value)}
-                    className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-semibold focus:ring-2 focus:ring-[#FF5A1F]"
-                  >
-                    {sortOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <CustomSelect
+                  label="Sort By"
+                  options={sortOptions}
+                  value={sort}
+                  onChange={setSort}
+                />
 
                 <button
                   type="button"

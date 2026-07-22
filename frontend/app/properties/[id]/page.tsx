@@ -203,6 +203,12 @@ export default function PropertyDetailPage({ params }: PageProps) {
                 priority
               />
               <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors" />
+              <button
+                type="button"
+                className="md:hidden absolute bottom-3 right-3 px-3 py-1.5 rounded-full bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider"
+              >
+                View Photos ({galleryImages.length})
+              </button>
             </div>
 
             {/* Side Grid 2x2 */}

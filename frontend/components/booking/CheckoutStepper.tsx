@@ -46,7 +46,7 @@ export default function CheckoutStepper({ currentStep }: CheckoutStepperProps) {
                 {isCompleted ? <Check className="w-4 h-4 text-white" /> : step.number}
               </div>
               <span
-                className={`mt-2 text-xs font-bold uppercase tracking-wider transition-colors ${
+                className={`mt-2 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-center line-clamp-1 transition-colors ${
                   isActive ? 'text-slate-900' : isCompleted ? 'text-[#FF5A1F]' : 'text-slate-400'
                 }`}
               >

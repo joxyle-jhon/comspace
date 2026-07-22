@@ -189,21 +189,89 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 py-6 space-y-4 animate-in slide-in-from-top duration-200">
+        <div className="md:hidden bg-white/98 backdrop-blur-xl border-b border-slate-200/80 px-6 py-6 space-y-3 animate-in slide-in-from-top duration-200 shadow-2xl">
           <Link
             href="/properties"
-            className="block text-sm font-bold text-slate-800 py-2 border-b border-slate-100"
+            className="block text-sm font-bold text-slate-800 py-2.5 border-b border-slate-100"
             onClick={() => setMobileMenuOpen(false)}
           >
             Find Stays
           </Link>
-          <Link
-            href="/host/become"
-            className="block text-sm font-bold text-[#FF5A1F] py-2 border-b border-slate-100"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Host Your Space
-          </Link>
+
+          {user ? (
+            <>
+              <Link
+                href="/bookings"
+                className="block text-sm font-bold text-slate-800 py-2.5 border-b border-slate-100"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                My Reservations
+              </Link>
+              <Link
+                href="/profile"
+                className="block text-sm font-bold text-slate-800 py-2.5 border-b border-slate-100"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Profile Settings
+              </Link>
+
+              {user.role === 'host' ? (
+                <Link
+                  href="/host/dashboard"
+                  className="block text-sm font-bold text-[#FF5A1F] py-2.5 border-b border-slate-100"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Host Dashboard
+                </Link>
+              ) : (
+                <Link
+                  href="/host/become"
+                  className="block text-sm font-bold text-[#FF5A1F] py-2.5 border-b border-slate-100"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Host Your Space
+                </Link>
+              )}
+
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false)
+                  logout()
+                  router.push('/')
+                }}
+                className="w-full text-left text-sm font-bold text-rose-600 py-2.5"
+              >
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/host/become"
+                className="block text-sm font-bold text-[#FF5A1F] py-2.5 border-b border-slate-100"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Host Your Space
+              </Link>
+              <div className="pt-2 flex flex-col gap-2">
+                <Link
+                  href="/auth/login"
+                  className="w-full text-center py-2.5 rounded-full border border-slate-200 text-xs font-bold text-slate-800"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/auth/register"
+                  className="w-full text-center py-2.5 rounded-full gradient-bg text-white text-xs font-bold uppercase tracking-wider"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Get Started
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       )}
     </nav>
