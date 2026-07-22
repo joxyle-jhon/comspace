@@ -35,10 +35,21 @@ STATUS: <span style="color: #16a34a">DONE</span>
     - See SKILL.md Error Handling section for the required format
     - File: backend/app/Http/Controllers/Api/*.php
 
-BRANCH: test/backend-auth-api
-STATUS: <span style="color: #16a34a">DONE</span>
+BRANCH: feature/backend-google-oauth
+PRIORITY: 1
 ------
-[x] Write Pest feature test: AuthApiTest
+[ ] Implement Google OAuth authentication with Laravel Socialite
+    - Install package: composer require laravel/socialite
+    - Add GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI to .env
+    - Create GET /api/auth/google/redirect endpoint
+    - Create GET /api/auth/google/callback endpoint
+    - Find or create user by google_id / email and return Sanctum plainTextToken
+    - File: backend/config/services.php, backend/app/Http/Controllers/Api/AuthController.php
+
+BRANCH: test/backend-auth-api
+PRIORITY: 2
+------
+[ ] Write Pest feature test: AuthApiTest
     - Test: register with valid data returns token
     - Test: login with invalid credentials returns 401
     - Test: login with invalid payload returns 422
@@ -59,7 +70,6 @@ STATUS: <span style="color: #16a34a">DONE</span>
     - File: backend/app/Models/Property.php (scopes), PropertyController.php
 
 BRANCH: feature/backend-price-preview
-PRIORITY: 1
 STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Add GET /api/properties/{id}/price-preview endpoint
@@ -67,23 +77,39 @@ STATUS: <span style="color: #16a34a">DONE</span>
     - Returns: nights, price_per_night, subtotal, cleaning_fee,
                service_fee, total_amount (all in cents)
     - Validate dates are not in the past and check_out > check_in
-    - File: backend/routes/api.php, backend/app/Http/Controllers/Api/PropertyController.php
+    - File: backend/routes/api.php, backend/app/Http/Controllers/Api/BookingController.php
 
 BRANCH: feature/backend-image-upload
-PRIORITY: 2
 STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Implement POST /api/properties/{id}/images endpoint
     - Accept multipart image uploads
-    - Store in /storage/app/public/properties/{id}/
-    - Run: php artisan storage:link
+    - Store in /storage/app/public/properties/{id}/ (or Supabase Storage)
     - Return public URL in response
     - Max 10 images per property, validate mime types (jpg, png, webp)
     - File: backend/app/Http/Controllers/Api/PropertyController.php
 
+BRANCH: feature/backend-review-reply
+STATUS: <span style="color: #16a34a">DONE</span>
+------
+[x] Implement POST /api/reviews/{id}/reply endpoint
+    - Allow host to reply to guest reviews on their property
+    - Update host_reply and host_replied_at columns
+    - Only the property owner can reply; only once
+    - File: backend/app/Http/Controllers/Api/ReviewController.php
+    - File: backend/app/Policies/ReviewPolicy.php
+
+BRANCH: feature/backend-host-dashboard-api
+STATUS: <span style="color: #16a34a">DONE</span>
+------
+[x] Add GET /api/host/stats endpoint
+    - Returns: total_properties, total_bookings, total_revenue (cents),
+               pending_bookings, avg_rating, recent_bookings[]
+    - Auth protected: host only
+    - File: backend/routes/api.php, backend/app/Http/Controllers/Api/HostController.php
+
 BRANCH: test/backend-booking-api
-PRIORITY: 1
-NEXT
+PRIORITY: 3
 ------
 [ ] Write Pest feature test: BookingApiTest
     - Test: guest can create booking (returns 201)
@@ -94,31 +120,21 @@ NEXT
     - File: backend/tests/Feature/BookingApiTest.php
 
 BRANCH: feature/backend-availability-blocks
-PRIORITY: 2
+PRIORITY: 4
 ------
 [ ] Add POST /api/properties/{id}/availability endpoint (host only)
     - Allows hosts to block off dates (vacations, maintenance)
-    - File: backend/database/migrations/..._create_availability_blocks_table.php
-    - File: backend/app/Models/AvailabilityBlock.php
+    - Connect AvailabilityBlock model to PropertyController/AvailabilityController
+    - File: backend/routes/api.php, backend/app/Http/Controllers/Api/AvailabilityController.php
 
-BRANCH: feature/backend-review-reply
-PRIORITY: 3
+BRANCH: feature/backend-stripe-webhook
+PRIORITY: 5
 ------
-[ ] Implement POST /api/reviews/{id}/reply endpoint
-    - Allow host to reply to guest reviews on their property
-    - Update host_reply and host_replied_at columns
-    - Only the property owner can reply; only once
-    - File: backend/app/Http/Controllers/Api/ReviewController.php
-    - File: backend/app/Policies/ReviewPolicy.php
-
-BRANCH: feature/backend-host-dashboard-api
-PRIORITY: 4
-------
-[ ] Add GET /api/host/stats endpoint
-    - Returns: total_properties, total_bookings, total_revenue (cents),
-               pending_bookings, avg_rating, recent_bookings[]
-    - Auth protected: host only
-    - File: backend/routes/api.php, new HostController.php
+[ ] Add POST /api/webhooks/stripe endpoint
+    - Verify Stripe signature using STRIPE_WEBHOOK_SECRET
+    - Handle payment_intent.succeeded to mark booking as confirmed/paid
+    - Handle payment_intent.payment_failed to update booking status
+    - File: backend/routes/api.php, backend/app/Http/Controllers/Api/StripeWebhookController.php
 
 
 ============================
@@ -126,73 +142,71 @@ PRIORITY: 4
 ============================
 
 BRANCH: feature/frontend-auth-pages
+STATUS: PARTIAL
 ------
-[ ] Build /app/auth/login/page.tsx
+[x] Build /app/auth/login/page.tsx
     - Email + password form with validation
-    - Show error messages inline below each input
-    - "Remember me" checkbox
-    - Link to register page
+    - Inline error messages
     - On success: store token in Zustand auth store, redirect to /
-    - Use authApi.login() from lib/services.ts
-[ ] Build /app/auth/register/page.tsx
-    - Name, email, password, confirm password, role (Guest/Host) fields
-    - All inputs must be labelled (see SKILL.md A11Y rules)
+[x] Build /app/auth/register/page.tsx
+    - Name, email, password, confirm password, role fields
+    - Labelled inputs (A11Y compliance)
     - On success: store token, redirect to /
-    - Use authApi.register() from lib/services.ts
-[ ] Add /app/auth/layout.tsx
+[ ] Add "Continue with Google" OAuth button to login & register pages
+    - Redirects to GET /api/auth/google/redirect
+    - File: app/auth/login/page.tsx, app/auth/register/page.tsx
+[ ] Build /app/auth/layout.tsx
     - Centered card layout with branding on the left (split screen)
 
 BRANCH: feature/frontend-property-detail
-STATUS: PARTIAL
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[~] Property details available via modal on card click
+[x] Property details available via modal on card click
     - Opens PropertyDetailModal with gallery, host, amenities, reviews
     - Fetches GET /api/properties/{id}
-    - Full /app/properties/[id]/page.tsx detail route still optional later
-[ ] Build /app/properties/[id]/page.tsx
-    - Fetch property with useQuery and propertyApi.get(id)
+[x] Build /app/properties/[id]/page.tsx
+    - Fetch property with propertyApi.get(id)
     - Image gallery: 5-photo grid (CSS grid, first photo spans 2 rows)
     - Host card: avatar, name, host since, response rate, rating
     - Amenities grid: grouped by category (Wifi, Kitchen, etc.)
     - Reviews list with star ratings and pagination
-    - Map placeholder (can use a static image or embed later)
-    - Add skeleton loaders for all sections
-    - Reference: components/properties/PropertyCardSkeleton.tsx pattern
+    - Skeleton loaders for all sections
 
 BRANCH: feature/frontend-booking-widget
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Build BookingWidget component (shown on property detail page)
+[x] Build BookingWidget component (shown on property detail page)
     - Date picker: check-in / check-out (inline calendar or date inputs)
     - Guest count selector with +/- buttons
     - Live price breakdown (call propertiesApi.previewPrice on date change)
     - Shows: x nights × $price, cleaning fee, service fee, total
     - "Reserve" button → if not logged in, redirect to /auth/login
-    - On mobile: show as bottom sheet drawer (glass panel from globals.css)
+    - On mobile: show as bottom sheet drawer
     - File: components/booking/BookingWidget.tsx
 
 BRANCH: feature/frontend-checkout-flow
+PRIORITY: 2
 ------
 [ ] Build /app/bookings/new/page.tsx
     - Multi-step flow: Review → Payment → Confirmation
     - Step 1: Show booking summary (property, dates, price breakdown)
-    - Step 2: Payment form (Stripe Elements placeholder — use a mock card UI)
+    - Step 2: Payment form (Stripe Elements)
     - Step 3: Confirmation screen with booking ID and check-in instructions
-    - Use bookingsApi.create() from lib/services.ts
-    - Handle API errors gracefully (e.g. date conflict) with toast/alert
     - File: app/bookings/new/page.tsx, components/booking/CheckoutStepper.tsx
 
 BRANCH: feature/frontend-bookings-list
+PRIORITY: 3
 ------
 [ ] Build /app/bookings/page.tsx
     - List of guest's own bookings (use bookingsApi.list())
     - Show: property thumbnail, dates, status badge, total price
     - Status badges with distinct colors: pending, confirmed, cancelled, completed
-    - "Cancel" button for upcoming bookings (call bookingsApi.cancel())
+    - "Cancel" button for upcoming bookings
     - "Leave a Review" button for completed bookings with no review yet
-    - Empty state if no bookings
-    - Add skeleton loaders
+    - Empty state + skeleton loaders
 
 BRANCH: feature/frontend-review-flow
+PRIORITY: 4
 ------
 [ ] Build review modal/page triggered from bookings list
     - Star rating picker (1–5) with animated fill
@@ -202,47 +216,41 @@ BRANCH: feature/frontend-review-flow
     - File: components/booking/ReviewModal.tsx
 
 BRANCH: feature/frontend-host-dashboard
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Build /app/host/dashboard/page.tsx
+[x] Build /app/host/dashboard/page.tsx
     - Stats cards: Total Revenue, Active Bookings, Properties Listed, Avg Rating
-    - Revenue chart: monthly bar chart using recharts (already installed)
+    - Revenue chart using recharts
     - Recent bookings table with status and quick actions
-    - Upcoming arrivals list (next 7 days)
-    - All data fetched from GET /api/host/stats
-    - File: app/host/dashboard/page.tsx
+    - Upcoming arrivals list
 
 BRANCH: feature/frontend-host-property-management
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Build /app/host/properties/page.tsx
-    - List of host's own properties with edit/delete/publish toggle
-    - Use propertiesApi.list() filtered to current user
-[ ] Build /app/host/properties/new/page.tsx
+[x] Build /app/host/properties/page.tsx
+    - List host properties with edit/delete/publish toggle
+[x] Build /app/host/properties/new/page.tsx
     - Multi-step form: Details → Location → Photos → Pricing → Publish
-    - Step 1: Title, description, type, bedrooms, bathrooms, max guests
-    - Step 2: Address, city, country fields
-    - Step 3: Multi-image upload (drag and drop preferred)
-    - Step 4: Price per night, cleaning fee, min/max nights, instant book toggle
-    - Step 5: Review & publish confirmation
-    - Submit via propertiesApi.create()
-[ ] Build /app/host/properties/[id]/edit/page.tsx
-    - Same form as above, pre-populated with existing data
+[x] Build /app/host/properties/[id]/edit/page.tsx
+    - Pre-populated property editing form
 
 BRANCH: feature/frontend-profile-page
+PRIORITY: 5
 ------
 [ ] Build /app/profile/page.tsx
     - Display and edit user name, email, phone, bio, country
-    - Avatar upload (show initials if no avatar)
-    - Change password section (separate form)
+    - Avatar upload
+    - Change password section
 
 BRANCH: feature/frontend-footer
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Build Footer component
+[x] Build Footer component
     - Four columns: About Comspace, Support, Hosting, Legal
-    - Bottom row: copyright + social icons
-    - File: components/layout/Footer.tsx
-    - Import in app/layout.tsx below <main>
+    - File: components/layout/Footer.tsx (imported in app/page.tsx)
 
 BRANCH: feature/frontend-404-page
+STATUS: PENDING
 ------
 [ ] Build /app/not-found.tsx
     - Friendly 404 message with link back to Browse
@@ -254,10 +262,10 @@ BRANCH: feature/frontend-404-page
 ============================
 
 BRANCH: feature/integrate-auth-flow
+STATUS: PARTIAL
 ------
-[ ] Wire Navbar to show correct state (guest vs host vs anonymous)
-    - Uses useAuthStore from store/auth.ts (already written)
-    - Test: login → navbar updates without refresh
+[x] Wire Navbar to show correct state (guest vs host vs anonymous)
+    - Uses useAuthStore from store/useAuthStore.ts
 [ ] Add route protection using Next.js middleware
     - Redirect unauthenticated users away from /bookings, /host/*
     - File: frontend/middleware.ts
@@ -266,36 +274,34 @@ BRANCH: feature/integrate-property-api
 STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Connect PropertyCard to real API data
-    - Verify images load from backend storage URLs
-    - Handle missing images with a fallback placeholder
-[x] Add infinite scroll OR pagination to /properties page
-    - Dedicated browse page includes search filters and pagination
+    - Verify images load from backend / Supabase storage URLs
+[x] Add search filters and pagination to /properties page
 
 BRANCH: feature/integrate-stripe
+PRIORITY: 1
 ------
 [ ] Set up Stripe Elements on the checkout page
-    - Use @stripe/react-stripe-js and @stripe/stripe-js
+    - Install: npm install @stripe/react-stripe-js @stripe/stripe-js
     - Call backend to create PaymentIntent, pass client_secret to Elements
     - Handle payment success → call bookingsApi.confirm()
-    - Handle payment failure → show error toast
     - File: components/booking/PaymentForm.tsx
 
 BRANCH: feature/frontend-toast-notifications
+PRIORITY: 2
 ------
-[ ] Implement a global toast/notification system
-    - Use react-hot-toast (install: npm install react-hot-toast)
-    - Add <Toaster /> to app/providers.tsx
-    - Use on: booking created, booking cancelled, review submitted, errors
+[ ] Implement global toast/notification system
+    - Install: npm install react-hot-toast
+    - Add <Toaster /> to root layout / providers
+    - Use on: booking created, cancelled, review submitted, errors
     - File: app/providers.tsx
 
 BRANCH: feature/frontend-responsive-audit
+PRIORITY: 3
 ------
 [ ] Audit and fix responsiveness on all pages
     - Test on: 375px (mobile), 768px (tablet), 1280px (desktop)
-    - Fix: Navbar hamburger menu (currently missing mobile nav)
-    - Fix: PropertyCard grid on small screens
+    - Fix: Navbar mobile drawer menu
     - Fix: SearchBar stacking layout on mobile
-    - Check SKILL.md CSS rules — prefer Flexbox and Grid
 
 
 ============================
@@ -304,16 +310,16 @@ BRANCH: feature/frontend-responsive-audit
 
 BRANCH: chore/env-example-update
 ------
-[ ] Update backend/.env.example with all required keys documented
-    - DB_*, REDIS_*, SANCTUM_*, STRIPE_*, FRONTEND_URL
+[ ] Update backend/.env.example with all required keys
+    - DB_*, REDIS_*, SANCTUM_*, STRIPE_*, GOOGLE_*, SUPABASE_*
 [ ] Create frontend/.env.example
-    - NEXT_PUBLIC_API_URL, NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+    - NEXT_PUBLIC_API_URL, NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY, NEXT_PUBLIC_GOOGLE_CLIENT_ID
 
 BRANCH: chore/database-seeder
 ------
 [ ] Build DatabaseSeeder with realistic demo data
     - 2 host users, 1 guest user
-    - 6 properties with images (use Unsplash URLs), amenities, and reviews
+    - 6 properties with Supabase/Unsplash image URLs, amenities, and reviews
     - 3 bookings in various statuses
     - File: backend/database/seeders/DatabaseSeeder.php
 
@@ -321,7 +327,7 @@ BRANCH: docs/api-documentation
 ------
 [ ] Document all API endpoints in backend/API.md
     - Method, URL, Auth required, Request body, Response example
-    - Follow SKILL.md API Standards (RESTful, versioned, paginated)
+    - Include Google OAuth & Stripe Webhook contracts
 
 
 ===========================================================

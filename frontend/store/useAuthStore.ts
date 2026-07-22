@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { AxiosError } from 'axios'
 import { api } from '@/lib/api'
 
 export interface User {
@@ -14,8 +15,8 @@ interface AuthState {
   token: string | null
   isLoading: boolean
   error: string | null
-  login: (credentials: any) => Promise<void>
-  register: (data: any) => Promise<void>
+  login: (credentials: Record<string, unknown>) => Promise<void>
+  register: (data: Record<string, unknown>) => Promise<void>
   logout: () => Promise<void>
   fetchMe: () => Promise<void>
   initialize: () => void
@@ -45,8 +46,9 @@ export const useAuthStore = create<AuthState>((set) => ({
       localStorage.setItem('comspace_token', token)
       localStorage.setItem('comspace_user', JSON.stringify(user))
       set({ user, token, isLoading: false })
-    } catch (err: any) {
-      set({ error: err.response?.data?.message || 'Login failed', isLoading: false })
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>
+      set({ error: error.response?.data?.message || 'Login failed', isLoading: false })
       throw err
     }
   },
@@ -59,8 +61,9 @@ export const useAuthStore = create<AuthState>((set) => ({
       localStorage.setItem('comspace_token', token)
       localStorage.setItem('comspace_user', JSON.stringify(user))
       set({ user, token, isLoading: false })
-    } catch (err: any) {
-      set({ error: err.response?.data?.message || 'Registration failed', isLoading: false })
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>
+      set({ error: error.response?.data?.message || 'Registration failed', isLoading: false })
       throw err
     }
   },

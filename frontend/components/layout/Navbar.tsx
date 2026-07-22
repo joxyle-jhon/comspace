@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { User, LogOut, PlusCircle, Home, Menu, Shield } from 'lucide-react'
+import { LogOut, PlusCircle, Home, Menu, Shield } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { cn } from '@/lib/utils'
 

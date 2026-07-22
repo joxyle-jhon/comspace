@@ -33,8 +33,8 @@ export default function HostLayout({ children }: { children: React.ReactNode }) 
         router.push('/')
         return
       }
-      setAuthChecked(true)
-    } catch (e) {
+      queueMicrotask(() => setAuthChecked(true))
+    } catch {
       router.push('/auth/login')
     }
   }, [user, token, router])

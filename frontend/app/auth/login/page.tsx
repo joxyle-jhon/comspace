@@ -43,7 +43,7 @@ export default function LoginPage() {
 
     try {
       await login(formData)
-    } catch (err: any) {
+    } catch (err) {
       console.error(err)
     }
   }

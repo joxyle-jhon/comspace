@@ -14,22 +14,36 @@ export default function HostPropertiesPage() {
   const [togglingId, setTogglingId] = useState<number | null>(null)
   const [deletingId, setDeletingId] = useState<number | null>(null)
 
-  const fetchProperties = async () => {
-    setIsLoading(true)
-    setError(null)
-    try {
-      const res = await propertiesApi.list({ my_properties: true })
-      setProperties(res.data || [])
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load properties')
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const [reloadKey, setReloadKey] = useState(0)
 
   useEffect(() => {
-    fetchProperties()
-  }, [])
+    let isCancelled = false
+
+    propertiesApi
+      .list({ my_properties: true })
+      .then((res) => {
+        if (!isCancelled) {
+          setProperties(res.data || [])
+          setError(null)
+        }
+      })
+      .catch((err) => {
+        if (!isCancelled) {
+          setError(err.response?.data?.message || 'Failed to load properties')
+        }
+      })
+      .finally(() => {
+        if (!isCancelled) setIsLoading(false)
+      })
+
+    return () => {
+      isCancelled = true
+    }
+  }, [reloadKey])
+
+  const fetchProperties = async () => {
+    setReloadKey((k) => k + 1)
+  }
 
   const handleTogglePublish = async (id: number, currentStatus: boolean) => {
     setTogglingId(id)

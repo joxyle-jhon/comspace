@@ -54,7 +54,7 @@ export default function RegisterPage() {
 
     try {
       await register(formData)
-    } catch (err: any) {
+    } catch (err) {
       console.error(err)
     }
   }

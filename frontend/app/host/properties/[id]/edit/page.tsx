@@ -22,8 +22,9 @@ export default function HostEditPropertyPage() {
       try {
         const data = await propertiesApi.get(id)
         setProperty(data)
-      } catch (err: any) {
-        setError(err.response?.data?.message || 'Failed to load property details')
+      } catch (err) {
+        const error = err as { response?: { data?: { message?: string } } }
+        setError(error.response?.data?.message || 'Failed to load property details')
       } finally {
         setIsLoading(false)
       }
@@ -33,7 +34,7 @@ export default function HostEditPropertyPage() {
     }
   }, [id])
 
-  const handleSubmit = async (data: any, files: File[]) => {
+  const handleSubmit = async (data: Record<string, unknown>, files: File[]) => {
     setIsSubmitting(true)
     setError(null)
 
@@ -49,9 +50,10 @@ export default function HostEditPropertyPage() {
       }
 
       router.push('/host/properties')
-    } catch (err: any) {
+    } catch (err) {
       console.error(err)
-      setError(err.response?.data?.message || 'Failed to update listing. Please verify inputs.')
+      const error = err as { response?: { data?: { message?: string } } }
+      setError(error.response?.data?.message || 'Failed to update listing. Please verify inputs.')
       setIsSubmitting(false)
     }
   }
@@ -94,7 +96,7 @@ export default function HostEditPropertyPage() {
         </Link>
         <div>
           <h1 className="font-heading text-3xl font-black text-slate-900 tracking-tight mb-1">Edit Listing</h1>
-          <p className="text-slate-500 text-sm">Update pricing, photos, and configurations for "{property.title}".</p>
+          <p className="text-slate-500 text-sm">Update pricing, photos, and configurations for &quot;{property.title}&quot;.</p>
         </div>
       </div>
 
