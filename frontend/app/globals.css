@@ -4,10 +4,10 @@
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-heading: var(--font-outfit), system-ui, sans-serif;
   
-  --color-brand-primary: #ff6700;
-  --color-brand-secondary: #ff9248;
-  --color-brand-tertiary: #ffb38a;
-  --color-brand-light: #ffd7b5;
+  --color-brand-primary: #FF5A1F;
+  --color-brand-secondary: #FF7A45;
+  --color-brand-tertiary: #FFA07A;
+  --color-brand-light: #FFF0EB;
   --color-brand-base: #ffffff;
   
   --animate-float: float 6s ease-in-out infinite;
@@ -25,12 +25,14 @@
 
 /* Custom properties */
 :root {
-  --radius-card: 1.25rem;
-  --transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --radius-card: 1.5rem;
+  --transition-smooth: 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {
   font-family: var(--font-sans);
+  background-color: #FDFBF9;
+  color: #0F172A;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -46,42 +48,48 @@ h1, h2, h3, h4, h5, h6 {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #ffb38a;
+  background: #FFA07A;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #ff9248;
+  background: #FF5A1F;
 }
 
 /* Focus Outline Reset */
 :focus-visible {
-  outline: 2px solid var(--color-brand-primary);
+  outline: 2px solid #FF5A1F;
   outline-offset: 2px;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
-/* Custom Classes */
+/* Custom Design Classes */
 .gradient-text {
-  background: linear-gradient(135deg, #ff6700 0%, #ff9248 100%);
+  background: linear-gradient(135deg, #FF5A1F 0%, #FF7A45 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .gradient-bg {
-  background: linear-gradient(135deg, #ff6700 0%, #ff9248 100%);
+  background: linear-gradient(135deg, #FF5A1F 0%, #FF7A45 100%);
 }
 
 .glass {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-dark {
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .card-hover {
   transition: box-shadow var(--transition-smooth), transform var(--transition-smooth);
 }
 .card-hover:hover {
-  box-shadow: 0 12px 30px -4px rgba(255,103,0,0.06), 0 20px 40px -8px rgba(255,103,0,0.04);
-  transform: translateY(-2px);
+  box-shadow: 0 20px 40px -12px rgba(255, 90, 31, 0.12), 0 8px 16px -4px rgba(15, 23, 42, 0.04);
+  transform: translateY(-3px);
 }

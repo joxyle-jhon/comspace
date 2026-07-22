@@ -191,7 +191,7 @@ function CheckoutContent() {
     'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80'
 
   return (
-    <div className="min-h-screen pt-28 pb-24 bg-slate-50">
+    <div className="min-h-screen pt-28 pb-24 bg-[#FDFBF9]">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <CheckoutStepper currentStep={step} />
 
