@@ -172,6 +172,18 @@ STATUS: <span style="color: #16a34a">DONE</span>
     - Reviews list with star ratings and pagination
     - Skeleton loaders for all sections
 
+BRANCH: feature/frontend-ui-ux-redesign
+STATUS: <span style="color: #16a34a">DONE</span>
+------
+[x] Full Comspace UI/UX Redesign — Direction 1 (Warm Editorial & Nomad Luxury)
+    - Vector SVG Logo integration matching brand mark
+    - Brand palette: Warm Terracotta (#FF5A1F) + Warm Linen (#FDFBF9)
+    - Clean editorial hero header: "Find your next comfortable space"
+    - Custom animated CustomSelect dropdown components
+    - Dedicated Why Comspace & Story page (/app/about/page.tsx)
+    - Vector SVG favicon (app/icon.svg) and metadata setup
+    - Frictionless mobile responsiveness across views
+
 BRANCH: feature/frontend-booking-widget
 STATUS: <span style="color: #16a34a">DONE</span>
 ------
