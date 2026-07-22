@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { api } from '@/lib/api'
 import Navbar from '@/components/layout/Navbar'
@@ -85,12 +85,6 @@ export default function Home() {
         <div className="absolute top-1/3 right-10 w-[400px] h-[250px] bg-amber-400/10 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          {/* Curation Subtitle Badge */}
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FFF0EB] border border-[#FF5A1F]/20 text-[#FF5A1F] text-xs font-bold uppercase tracking-wider mb-6 shadow-sm">
-            <Sparkles className="w-3.5 h-3.5" />
-            Handpicked homes & work-ready spaces
-          </span>
-
           {/* Editorial Title */}
           <h1 className="font-heading text-4xl sm:text-6xl font-black text-slate-900 tracking-tight leading-[1.08] mb-8 max-w-4xl mx-auto">
             Find your next stay to <br className="hidden sm:inline" />
