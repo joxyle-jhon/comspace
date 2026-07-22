@@ -244,6 +244,26 @@ export const bookingsApi = {
   },
 }
 
+export interface ReviewData {
+  rating: number
+  cleanliness_rating?: number
+  accuracy_rating?: number
+  communication_rating?: number
+  location_rating?: number
+  value_rating?: number
+  comment: string
+}
+
+export const reviewsApi = {
+  /**
+   * Submit a review for a completed booking.
+   */
+  create: async (bookingId: number | string, data: ReviewData) => {
+    const res = await api.post(`/bookings/${bookingId}/reviews`, data)
+    return res.data
+  },
+}
+
 export interface AuthUser {
   id: number
   name: string
