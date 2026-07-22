@@ -79,12 +79,14 @@ export default function Home() {
       <Navbar />
 
       {/* Hero Header Section */}
-      <header className="relative pt-40 pb-28 bg-[#FDFBF9] overflow-hidden">
-        {/* Soft Ambient Warm Lighting Glows */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-[#FF5A1F]/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute top-1/3 right-10 w-[400px] h-[250px] bg-amber-400/10 rounded-full blur-[100px] pointer-events-none" />
+      <header className="relative pt-40 pb-28 bg-[#FDFBF9] z-20">
+        {/* Soft Ambient Warm Lighting Glows (Contained) */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-[#FF5A1F]/10 rounded-full blur-[120px]" />
+          <div className="absolute top-1/3 right-10 w-[400px] h-[250px] bg-amber-400/10 rounded-full blur-[100px]" />
+        </div>
 
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-30">
           {/* Editorial Title */}
           <h1 className="font-heading text-4xl sm:text-6xl font-black text-slate-900 tracking-tight leading-[1.08] mb-8 max-w-4xl mx-auto">
             Find your next stay to <br className="hidden sm:inline" />
@@ -92,14 +94,14 @@ export default function Home() {
           </h1>
 
           {/* Floating SearchBar Widget */}
-          <div className="max-w-4xl mx-auto mt-8">
+          <div className="max-w-4xl mx-auto mt-8 relative z-40">
             <SearchBar onSearch={handleSearch} />
           </div>
         </div>
       </header>
 
       {/* Stays Section */}
-      <main className="py-20 bg-[#FDFBF9] relative z-[1]">
+      <main className="py-20 bg-[#FDFBF9] relative z-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
             <div>

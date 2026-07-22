@@ -64,7 +64,7 @@ export default function GuestSelector({
 
       {/* Guest Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 z-40 mt-3 w-80 animate-in rounded-3xl border border-slate-100 bg-white p-5 shadow-2xl fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute right-0 z-50 mt-3 w-80 animate-in rounded-3xl border border-slate-100 bg-white p-5 shadow-2xl fade-in slide-in-from-top-2 duration-200">
           <div className="space-y-6">
             {/* Adults */}
             <div className="flex items-center justify-between">
