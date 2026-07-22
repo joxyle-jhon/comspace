@@ -33,6 +33,9 @@ Property image upload
 Booking conflict / stay rules
   php artisan test --filter=BookingConflictTest
 
+Booking API (create, confirm, cancel, auth guard)
+  php artisan test --filter=BookingApiTest
+
 Host dashboard stats
   php artisan test --filter=HostApiTest
 

@@ -60,6 +60,12 @@ class BookingService
         int $guestCount,
         ?string $guestNote = null
     ): Booking {
+        if ($guest->id === $property->user_id) {
+            throw ValidationException::withMessages([
+                'property' => 'You cannot book your own property.',
+            ]);
+        }
+
         if ($guestCount > $property->max_guests) {
             throw ValidationException::withMessages([
                 'guest_count' => "This property accommodates a maximum of {$property->max_guests} guests.",
