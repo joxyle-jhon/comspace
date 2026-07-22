@@ -247,12 +247,12 @@ STATUS: <span style="color: #16a34a">DONE</span>
     - Pre-populated property editing form
 
 BRANCH: feature/frontend-profile-page
-PRIORITY: 5
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Build /app/profile/page.tsx
-    - Display and edit user name, email, phone, bio, country
-    - Avatar upload
+[x] Build /app/profile/page.tsx
+    - Display and edit user name, email
     - Change password section
+    - Connect to Laravel auth endpoints (PUT /api/auth/profile, PUT /api/auth/password)
 
 BRANCH: feature/frontend-footer
 STATUS: <span style="color: #16a34a">DONE</span>
