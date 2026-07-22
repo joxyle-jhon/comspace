@@ -109,9 +109,9 @@ STATUS: <span style="color: #16a34a">DONE</span>
     - File: backend/routes/api.php, backend/app/Http/Controllers/Api/HostController.php
 
 BRANCH: test/backend-booking-api
-PRIORITY: 3
+STATUS: DONE
 ------
-[ ] Write Pest feature test: BookingApiTest
+[x] Write Pest feature test: BookingApiTest
     - Test: guest can create booking (returns 201)
     - Test: guest cannot book own property
     - Test: host can confirm booking
