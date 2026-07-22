@@ -77,7 +77,7 @@ export default function SearchBar({ className, initialValues, onSearch }: Search
   return (
     <div
       className={cn(
-        'relative z-30 w-full bg-white rounded-3xl md:rounded-full border border-slate-200/90 shadow-xl shadow-slate-900/5 p-3 flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-0 transition-all focus-within:ring-2 focus-within:ring-[#FF5A1F]/30',
+        'relative z-30 w-full bg-white rounded-3xl md:rounded-full border border-slate-200/90 shadow-xl shadow-slate-900/5 p-2 sm:p-3 flex flex-col md:flex-row items-stretch md:items-center gap-2 md:gap-0 transition-all focus-within:ring-2 focus-within:ring-[#FF5A1F]/30',
         className
       )}
       role="search"
@@ -85,7 +85,7 @@ export default function SearchBar({ className, initialValues, onSearch }: Search
       {/* WHERE field */}
       <div
         className={cn(
-          'flex-1 flex items-center gap-3 px-5 py-2.5 rounded-2xl md:rounded-l-full cursor-pointer hover:bg-slate-50/80 transition-colors group',
+          'flex-1 flex items-center gap-3 px-4 sm:px-5 py-2.5 rounded-2xl md:rounded-l-full cursor-pointer hover:bg-slate-50/80 transition-colors group',
           activeField === 'location' && 'bg-slate-50'
         )}
         onClick={() => {
@@ -93,8 +93,8 @@ export default function SearchBar({ className, initialValues, onSearch }: Search
           document.getElementById('search-location')?.focus()
         }}
       >
-        <div className="w-10 h-10 rounded-xl bg-[#FFF0EB] flex items-center justify-center text-[#FF5A1F] transition-colors shrink-0">
-          <MapPin className="w-5 h-5" />
+        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#FFF0EB] flex items-center justify-center text-[#FF5A1F] transition-colors shrink-0">
+          <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
         </div>
         <div className="flex-1 min-w-0 flex flex-col text-left">
           <label
@@ -136,10 +136,10 @@ export default function SearchBar({ className, initialValues, onSearch }: Search
       {/* Search button */}
       <button
         onClick={handleSearch}
-        className="gradient-bg text-white h-14 w-full md:w-14 rounded-2xl md:rounded-full flex items-center justify-center shadow-md shadow-[#FF5A1F]/25 hover:shadow-lg transition-all duration-300 transform active:scale-95 shrink-0 gap-2 md:gap-0 font-bold"
+        className="gradient-bg text-white h-12 md:h-14 w-full md:w-14 rounded-2xl md:rounded-full flex items-center justify-center shadow-md shadow-[#FF5A1F]/25 hover:shadow-lg transition-all duration-300 transform active:scale-95 shrink-0 gap-2 md:gap-0 text-xs sm:text-sm font-bold uppercase tracking-wider md:normal-case"
         aria-label="Search properties"
       >
-        <Search className="w-5 h-5" />
+        <Search className="w-4 h-4 sm:w-5 sm:h-5" />
         <span className="md:hidden">Find Stays</span>
       </button>
     </div>
