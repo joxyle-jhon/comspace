@@ -89,8 +89,8 @@ export default function Home() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-30">
           {/* Editorial Title */}
           <h1 className="font-heading text-4xl sm:text-6xl font-black text-slate-900 tracking-tight leading-[1.08] mb-8 max-w-4xl mx-auto">
-            Find your next stay to <br className="hidden sm:inline" />
-            <span className="gradient-text">create, work, or unwind</span>.
+            Find your next <br className="hidden sm:inline" />
+            <span className="gradient-text">comfortable space</span>.
           </h1>
 
           {/* Floating SearchBar Widget */}
