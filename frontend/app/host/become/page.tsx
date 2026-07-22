@@ -42,8 +42,9 @@ export default function BecomeHostPage() {
       setTimeout(() => {
         router.push('/host/dashboard')
       }, 2000)
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to activate host account. Please try again.')
+    } catch (err) {
+      const error = err as { response?: { data?: { message?: string } } }
+      setError(error.response?.data?.message || 'Failed to activate host account. Please try again.')
       setIsUpgrading(false)
     }
   }

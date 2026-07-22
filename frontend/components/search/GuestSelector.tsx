@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Users, Plus, Minus, X } from 'lucide-react'
+import { Users, Plus, Minus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface GuestSelectorProps {

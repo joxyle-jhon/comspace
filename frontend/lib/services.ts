@@ -174,6 +174,24 @@ export const propertiesApi = {
     const res = await api.delete(`/properties/${id}`)
     return res.data
   },
+
+  /**
+   * Preview price breakdown for a stay duration.
+   */
+  previewPrice: async (
+    id: number | string,
+    params: { check_in: string; check_out: string }
+  ): Promise<{
+    nights: number
+    price_per_night: number
+    subtotal: number
+    cleaning_fee: number
+    service_fee: number
+    total_amount: number
+  }> => {
+    const res = await api.get(`/properties/${id}/price-preview`, { params })
+    return res.data.data || res.data
+  },
 }
 
 export const bookingsApi = {

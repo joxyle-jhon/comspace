@@ -8,7 +8,6 @@ import {
   Star, 
   Check, 
   X, 
-  ArrowRight,
   TrendingUp
 } from 'lucide-react'
 import Link from 'next/link'
@@ -28,23 +27,36 @@ export default function HostDashboardPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [actionLoadingId, setActionLoadingId] = useState<number | null>(null)
-
-  const fetchDashboardData = async () => {
-    setIsLoading(true)
-    setError(null)
-    try {
-      const data = await hostApi.getStats()
-      setStats(data)
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to fetch dashboard data')
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const [reloadKey, setReloadKey] = useState(0)
 
   useEffect(() => {
-    fetchDashboardData()
-  }, [])
+    let isCancelled = false
+
+    hostApi
+      .getStats()
+      .then((data) => {
+        if (!isCancelled) {
+          setStats(data)
+          setError(null)
+        }
+      })
+      .catch((err) => {
+        if (!isCancelled) {
+          setError(err.response?.data?.message || 'Failed to fetch dashboard data')
+        }
+      })
+      .finally(() => {
+        if (!isCancelled) setIsLoading(false)
+      })
+
+    return () => {
+      isCancelled = true
+    }
+  }, [reloadKey])
+
+  const fetchDashboardData = async () => {
+    setReloadKey((k) => k + 1)
+  }
 
   const handleConfirmBooking = async (id: number) => {
     setActionLoadingId(id)

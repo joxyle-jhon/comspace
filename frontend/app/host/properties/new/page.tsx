@@ -12,7 +12,7 @@ export default function HostNewPropertyPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = async (data: any, files: File[]) => {
+  const handleSubmit = async (data: Record<string, unknown>, files: File[]) => {
     setIsSubmitting(true)
     setError(null)
 
@@ -29,9 +29,10 @@ export default function HostNewPropertyPage() {
 
       await propertiesApi.publish(createdProperty.id, true)
       router.push('/host/properties')
-    } catch (err: any) {
+    } catch (err) {
       console.error(err)
-      setError(err.response?.data?.message || 'Failed to create listing. Please check all fields.')
+      const error = err as { response?: { data?: { message?: string } } }
+      setError(error.response?.data?.message || 'Failed to create listing. Please check all fields.')
       setIsSubmitting(false)
     }
   }
