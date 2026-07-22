@@ -207,9 +207,9 @@ STATUS: <span style="color: #16a34a">DONE</span>
     - File: app/bookings/new/page.tsx, components/booking/CheckoutStepper.tsx
 
 BRANCH: feature/frontend-bookings-list
-PRIORITY: 3
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Build /app/bookings/page.tsx
+[x] Build /app/bookings/page.tsx
     - List of guest's own bookings (use bookingsApi.list())
     - Show: property thumbnail, dates, status badge, total price
     - Status badges with distinct colors: pending, confirmed, cancelled, completed
@@ -218,13 +218,13 @@ PRIORITY: 3
     - Empty state + skeleton loaders
 
 BRANCH: feature/frontend-review-flow
-PRIORITY: 4
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Build review modal/page triggered from bookings list
+[x] Build review modal/page triggered from bookings list
     - Star rating picker (1–5) with animated fill
     - Sub-ratings: Cleanliness, Accuracy, Communication, Location, Value
-    - Text area for written review (min 10 chars)
-    - Submit via bookingsApi.createReview()
+    - Text area for written review (min 20 chars)
+    - Submit via reviewsApi.create()
     - File: components/booking/ReviewModal.tsx
 
 BRANCH: feature/frontend-host-dashboard
@@ -337,7 +337,7 @@ PRIORITY: 2
     - ci-frontend.yml: Run npm run lint and npm run build on PR
     - cd-deploy.yml: Automated production deployment trigger (Render / Vercel / VPS)
 
-BRANCH: devops/queue-and-[#16a34a]stripe-listeners
+BRANCH: devops/queue-and-stripe-listeners
 PRIORITY: 3
 ------
 [ ] Configure background Queue Workers and Webhook Listeners
