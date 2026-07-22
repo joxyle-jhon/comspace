@@ -15,8 +15,13 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "COMSPACE | Find Premium Work & Living Spaces",
-  description: "Discover curated co-working and co-living rentals designed for remote professionals, digital nomads, and traveling creators.",
+  title: "COMSPACE | Find Your Comfortable Space",
+  description: "Discover curated stays and work-friendly spaces designed for remote professionals, digital nomads, and traveling creators.",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({

@@ -1,0 +1,25 @@
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  {/* Outer Rounded Location Arch */}
+  <path
+    d="M 50 10 C 27.9 10 10 27.9 10 50 C 10 65 20 78 32 85 M 50 10 C 72.1 10 90 27.9 90 50 C 90 60 85 70 78 77"
+    stroke="#FF5A1F"
+    stroke-width="12"
+    stroke-linecap="round"
+  />
+
+  {/* Inner Diamond House Outline */}
+  <path
+    d="M 50 32 L 78 60 L 50 88 L 22 60 Z"
+    stroke="#FF5A1F"
+    stroke-width="11"
+    stroke-linejoin="round"
+    stroke-linecap="round"
+    fill="none"
+  />
+
+  {/* 4 Window Squares in Center */}
+  <rect x="42" y="52" width="7" height="7" rx="1.5" fill="#FF5A1F" />
+  <rect x="51" y="52" width="7" height="7" rx="1.5" fill="#FF5A1F" />
+  <rect x="42" y="61" width="7" height="7" rx="1.5" fill="#FF5A1F" />
+  <rect x="51" y="61" width="7" height="7" rx="1.5" fill="#FF5A1F" />
+</svg>
