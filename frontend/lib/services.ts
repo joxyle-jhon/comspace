@@ -196,6 +196,38 @@ export const propertiesApi = {
 
 export const bookingsApi = {
   /**
+   * List all bookings for current user.
+   */
+  list: async (): Promise<Booking[]> => {
+    const res = await api.get('/bookings')
+    return res.data.data || res.data
+  },
+
+  /**
+   * Get a single booking by ID.
+   */
+  get: async (id: number | string): Promise<Booking> => {
+    const res = await api.get(`/bookings/${id}`)
+    return res.data.data || res.data
+  },
+
+  /**
+   * Create a new booking for a property.
+   */
+  create: async (
+    propertyId: number | string,
+    data: {
+      check_in: string
+      check_out: string
+      guest_count: number
+      guest_note?: string
+    }
+  ): Promise<Booking> => {
+    const res = await api.post(`/properties/${propertyId}/bookings`, data)
+    return res.data.data || res.data
+  },
+
+  /**
    * Confirm a booking (host action).
    */
   confirm: async (id: number | string): Promise<Booking> => {
