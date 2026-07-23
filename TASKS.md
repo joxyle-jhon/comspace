@@ -47,9 +47,9 @@ PRIORITY: 1
     - File: backend/config/services.php, backend/app/Http/Controllers/Api/AuthController.php
 
 BRANCH: test/backend-auth-api
-PRIORITY: 2
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Write Pest feature test: AuthApiTest
+[x] Write Pest feature test: AuthApiTest
     - Test: register with valid data returns token
     - Test: login with invalid credentials returns 401
     - Test: login with invalid payload returns 422
