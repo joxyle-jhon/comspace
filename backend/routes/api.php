@@ -47,6 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/properties/{property}/publish', [PropertyController::class, 'publish']);
     Route::delete('/properties/{property}', [PropertyController::class, 'destroy']);
     Route::post('/properties/{property}/availability', [AvailabilityController::class, 'store']);
+    Route::delete('/availability/{availability_block}', [AvailabilityController::class, 'destroy']);
 
     // Bookings
     Route::get('/bookings', [BookingController::class, 'index']);

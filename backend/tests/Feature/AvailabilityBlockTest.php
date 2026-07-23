@@ -232,4 +232,49 @@ describe('Availability Block API', function () {
         $response->assertUnprocessable()
             ->assertJsonValidationErrors(['blocked_from']);
     });
+
+    it('returns 401 when an unauthenticated user tries to delete a block', function () {
+        $host = User::factory()->create(['role' => 'host']);
+        $property = Property::factory()->create(['user_id' => $host->id]);
+        $block = AvailabilityBlock::create([
+            'property_id' => $property->id,
+            'blocked_from' => now()->addDays(5)->toDateString(),
+            'blocked_to' => now()->addDays(10)->toDateString(),
+        ]);
+
+        $response = $this->deleteJson("/api/availability/{$block->id}");
+        $response->assertUnauthorized();
+    });
+
+    it('returns 403 when an unauthorized user tries to delete a block', function () {
+        $host = User::factory()->create(['role' => 'host']);
+        $otherHost = User::factory()->create(['role' => 'host']);
+        $property = Property::factory()->create(['user_id' => $host->id]);
+        $block = AvailabilityBlock::create([
+            'property_id' => $property->id,
+            'blocked_from' => now()->addDays(5)->toDateString(),
+            'blocked_to' => now()->addDays(10)->toDateString(),
+        ]);
+
+        $response = $this->actingAs($otherHost)->deleteJson("/api/availability/{$block->id}");
+        $response->assertForbidden();
+    });
+
+    it('allows property owner (host) to delete an availability block', function () {
+        $host = User::factory()->create(['role' => 'host']);
+        $property = Property::factory()->create(['user_id' => $host->id]);
+        $block = AvailabilityBlock::create([
+            'property_id' => $property->id,
+            'blocked_from' => now()->addDays(5)->toDateString(),
+            'blocked_to' => now()->addDays(10)->toDateString(),
+        ]);
+
+        $response = $this->actingAs($host)->deleteJson("/api/availability/{$block->id}");
+        $response->assertOk()
+            ->assertJsonPath('message', 'Availability block deleted.');
+
+        $this->assertDatabaseMissing('availability_blocks', [
+            'id' => $block->id,
+        ]);
+    });
 });

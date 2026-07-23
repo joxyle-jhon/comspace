@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AvailabilityBlockResource;
+use App\Models\AvailabilityBlock;
 use App\Models\Property;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -28,8 +29,8 @@ class AvailabilityController extends Controller
             'reason' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $blockedFrom = now()->parse($data['blocked_from'])->toDateString();
-        $blockedTo = now()->parse($data['blocked_to'])->toDateString();
+        $blockedFrom = $data['blocked_from'];
+        $blockedTo = $data['blocked_to'];
 
         // 3. Prevent blocking dates that overlap with active bookings (confirmed or pending)
         $bookingConflict = $property->bookings()
@@ -64,5 +65,18 @@ class AvailabilityController extends Controller
         ]);
 
         return response()->json(new AvailabilityBlockResource($block), 201);
+    }
+
+    /**
+     * Delete an availability block (hosts only).
+     */
+    public function destroy(Request $request, AvailabilityBlock $availabilityBlock): JsonResponse
+    {
+        // Authorize: check if user owns the property of this availability block
+        $this->authorize('update', $availabilityBlock->property);
+
+        $availabilityBlock->delete();
+
+        return response()->json(['message' => 'Availability block deleted.']);
     }
 }
