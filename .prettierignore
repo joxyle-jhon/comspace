@@ -11,3 +11,5 @@ coverage/
 dist/
 build/
 *.generated.ts
+TASKS.md
+REVIEW.md
