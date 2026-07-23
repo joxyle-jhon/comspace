@@ -109,7 +109,7 @@ STATUS: <span style="color: #16a34a">DONE</span>
     - File: backend/routes/api.php, backend/app/Http/Controllers/Api/HostController.php
 
 BRANCH: test/backend-booking-api
-STATUS: DONE
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Write Pest feature test: BookingApiTest
     - Test: guest can create booking (returns 201)
@@ -120,9 +120,9 @@ STATUS: DONE
     - File: backend/tests/Feature/BookingApiTest.php
 
 BRANCH: feature/backend-availability-blocks
-PRIORITY: 4
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Add POST /api/properties/{id}/availability endpoint (host only)
+[x] Add POST /api/properties/{id}/availability endpoint (host only)
     - Allows hosts to block off dates (vacations, maintenance)
     - Connect AvailabilityBlock model to PropertyController/AvailabilityController
     - File: backend/routes/api.php, backend/app/Http/Controllers/Api/AvailabilityController.php

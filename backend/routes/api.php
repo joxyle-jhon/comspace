@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\AvailabilityController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\HostController;
 use App\Http\Controllers\Api\PropertyController;
@@ -45,6 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/properties/{property}/images', [PropertyController::class, 'uploadImages']);
     Route::patch('/properties/{property}/publish', [PropertyController::class, 'publish']);
     Route::delete('/properties/{property}', [PropertyController::class, 'destroy']);
+    Route::post('/properties/{property}/availability', [AvailabilityController::class, 'store']);
 
     // Bookings
     Route::get('/bookings', [BookingController::class, 'index']);
