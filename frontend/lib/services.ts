@@ -64,6 +64,21 @@ export interface Property {
   images: PropertyImage[]
   amenities: Amenity[]
   host: Host
+  reviews?: Review[]
+}
+
+export interface Review {
+  id: number
+  rating: number
+  comment: string
+  host_reply?: string | null
+  host_replied_at?: string | null
+  guest?: {
+    id: number
+    name: string
+    avatar?: string | null
+  }
+  created_at: string
 }
 
 export interface Guest {

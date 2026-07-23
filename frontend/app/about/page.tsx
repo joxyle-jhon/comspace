@@ -4,7 +4,7 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import StatsSection from '@/components/home/StatsSection'
 import WhyComspace from '@/components/home/WhyComspace'
-import { ShieldCheck, Sparkles, HeartHandshake, CheckCircle2 } from 'lucide-react'
+import { ShieldCheck, HeartHandshake, CheckCircle2 } from 'lucide-react'
 import Link from 'next/link'
 
 export default function AboutPage() {
@@ -15,10 +15,6 @@ export default function AboutPage() {
       <main className="min-h-screen bg-[#FDFBF9] pt-36 pb-24">
         {/* Editorial Header */}
         <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FFF0EB] border border-[#FF5A1F]/20 text-[#FF5A1F] text-xs font-bold uppercase tracking-wider mb-6 shadow-sm">
-            <Sparkles className="w-3.5 h-3.5" />
-            Our Mission & Story
-          </span>
           <h1 className="font-heading text-4xl sm:text-5xl font-black text-slate-900 tracking-tight leading-[1.1] mb-6">
             Why <span className="gradient-text">Comspace</span> was created.
           </h1>

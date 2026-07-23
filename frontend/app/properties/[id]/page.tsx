@@ -19,7 +19,7 @@ import {
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import BookingWidget from '@/components/booking/BookingWidget'
-import { propertiesApi, type Property } from '@/lib/services'
+import { propertiesApi, type Property, type Review } from '@/lib/services'
 import { pluralize } from '@/lib/utils'
 
 const FALLBACK_IMAGES = [
@@ -351,7 +351,7 @@ export default function PropertyDetailPage({ params }: PageProps) {
 
                 {property.reviews && property.reviews.length > 0 ? (
                   <div className="space-y-4">
-                    {property.reviews.map((review) => (
+                    {property.reviews.map((review: Review) => (
                       <div key={review.id} className="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
