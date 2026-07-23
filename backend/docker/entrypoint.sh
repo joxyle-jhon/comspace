@@ -1,15 +1,20 @@
 #!/bin/sh
 set -e
 
-# Ensure permissions for storage and bootstrap/cache
-chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-
-# Run Laravel optimizations if in production
 if [ "$APP_ENV" = "production" ]; then
-    php artisan config:cache || true
-    php artisan route:cache || true
-    php artisan view:cache || true
+    chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache 2>/dev/null || true
+    find /var/www/html/storage /var/www/html/bootstrap/cache -type d -exec chmod 775 {} + 2>/dev/null || true
+    find /var/www/html/storage /var/www/html/bootstrap/cache -type f -exec chmod 664 {} + 2>/dev/null || true
+
+    php artisan package:discover --ansi
+    php artisan config:cache
+    php artisan route:cache
+    php artisan view:cache
+else
+    # In development mode, discover packages dynamically without modifying host file permissions
+    if [ -f "artisan" ]; then
+        php artisan package:discover --ansi
+    fi
 fi
 
 # Execute supervisor

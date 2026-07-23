@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+set -eu
+
+echo "ruleskit: running pre-commit checks..."
+npx lint-staged
+
+echo "ruleskit: pre-commit checks passed"

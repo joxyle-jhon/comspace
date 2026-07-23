@@ -24,11 +24,38 @@ export interface Host {
   average_rating: number | null
 }
 
+export interface Review {
+  id: number
+  rating: number
+  cleanliness_rating?: number
+  accuracy_rating?: number
+  communication_rating?: number
+  location_rating?: number
+  value_rating?: number
+  comment: string
+  created_at: string
+  host_reply?: string | null
+  guest?: Guest | { id?: number; name?: string; avatar?: string | null }
+  user?: {
+    id: number
+    name: string
+    avatar?: string | null
+  }
+}
+
 export interface Property {
   id: number
   title: string
   description: string
-  type: 'apartment' | 'house' | 'villa' | 'cabin' | 'studio' | 'loft' | 'condo' | 'other'
+  type:
+    | 'apartment'
+    | 'house'
+    | 'villa'
+    | 'cabin'
+    | 'studio'
+    | 'loft'
+    | 'condo'
+    | 'other'
   location: {
     address: string
     city: string
@@ -64,6 +91,7 @@ export interface Property {
   images: PropertyImage[]
   amenities: Amenity[]
   host: Host
+  reviews?: Review[]
 }
 
 export interface Guest {
@@ -118,7 +146,9 @@ export const propertiesApi = {
   /**
    * List all properties, with optional query parameters.
    */
-  list: async (params?: Record<string, string | number | boolean>): Promise<{ data: Property[] }> => {
+  list: async (
+    params?: Record<string, string | number | boolean>
+  ): Promise<{ data: Property[] }> => {
     const res = await api.get('/properties', { params })
     return res.data
   },
@@ -142,7 +172,10 @@ export const propertiesApi = {
   /**
    * Update an existing property.
    */
-  update: async (id: number | string, data: Record<string, unknown>): Promise<Property> => {
+  update: async (
+    id: number | string,
+    data: Record<string, unknown>
+  ): Promise<Property> => {
     const res = await api.put(`/properties/${id}`, data)
     return res.data
   },
@@ -150,7 +183,10 @@ export const propertiesApi = {
   /**
    * Publish or unpublish a property listing.
    */
-  publish: async (id: number | string, published: boolean): Promise<{ is_published: boolean; message: string }> => {
+  publish: async (
+    id: number | string,
+    published: boolean
+  ): Promise<{ is_published: boolean; message: string }> => {
     const res = await api.patch(`/properties/${id}/publish`, { published })
     return res.data
   },
@@ -158,7 +194,10 @@ export const propertiesApi = {
   /**
    * Upload images for a property listing.
    */
-  uploadImages: async (id: number | string, formData: FormData): Promise<{ data: PropertyImage[] }> => {
+  uploadImages: async (
+    id: number | string,
+    formData: FormData
+  ): Promise<{ data: PropertyImage[] }> => {
     const res = await api.post(`/properties/${id}/images`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -284,7 +323,10 @@ export const authApi = {
   /**
    * Update current user profile details.
    */
-  updateProfile: async (data: { name: string; email: string }): Promise<{ message: string; user: AuthUser }> => {
+  updateProfile: async (data: {
+    name: string
+    email: string
+  }): Promise<{ message: string; user: AuthUser }> => {
     const res = await api.put('/auth/profile', data)
     return res.data
   },
@@ -292,7 +334,11 @@ export const authApi = {
   /**
    * Change current user password.
    */
-  updatePassword: async (data: { current_password: string; password: string; password_confirmation: string }): Promise<{ message: string }> => {
+  updatePassword: async (data: {
+    current_password: string
+    password: string
+    password_confirmation: string
+  }): Promise<{ message: string }> => {
     const res = await api.put('/auth/password', data)
     return res.data
   },

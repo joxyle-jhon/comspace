@@ -1,0 +1,17 @@
+{
+  "name": "comspace-tooling",
+  "private": true,
+  "scripts": {
+    "prepare": "husky",
+    "lint": "npm --prefix frontend run lint",
+    "format:docker": "prettier --write backend/docker docker-compose*.yml README.md",
+    "format:docker:check": "prettier --check backend/docker docker-compose*.yml README.md",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.8.2"
+  }
+}

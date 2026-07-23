@@ -1,0 +1,44 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: dev
+    environment:
+      APP_ENV: local
+      APP_DEBUG: 'true'
+      MAIL_MAILER: smtp
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
+    volumes:
+      - ./backend:/var/www/html
+      - /var/www/html/vendor
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: dev
+    command: npm run dev
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000/api
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+
+  postgres:
+    ports:
+      - '5432:5432'
+
+  redis:
+    ports:
+      - '6379:6379'
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: comspace-mailpit
+    restart: unless-stopped
+    ports:
+      - '8025:8025'
+      - '1025:1025'

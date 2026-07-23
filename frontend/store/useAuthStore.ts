@@ -19,6 +19,7 @@ interface AuthState {
   register: (data: Record<string, unknown>) => Promise<void>
   logout: () => Promise<void>
   fetchMe: () => Promise<void>
+  setUser: (user: User) => void
   initialize: () => void
 }
 
@@ -48,7 +49,10 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ user, token, isLoading: false })
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>
-      set({ error: error.response?.data?.message || 'Login failed', isLoading: false })
+      set({
+        error: error.response?.data?.message || 'Login failed',
+        isLoading: false,
+      })
       throw err
     }
   },
@@ -63,7 +67,10 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ user, token, isLoading: false })
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>
-      set({ error: error.response?.data?.message || 'Registration failed', isLoading: false })
+      set({
+        error: error.response?.data?.message || 'Registration failed',
+        isLoading: false,
+      })
       throw err
     }
   },
@@ -79,6 +86,13 @@ export const useAuthStore = create<AuthState>((set) => ({
       localStorage.removeItem('comspace_user')
       set({ user: null, token: null, isLoading: false })
     }
+  },
+
+  setUser: (user: User) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('comspace_user', JSON.stringify(user))
+    }
+    set({ user })
   },
 
   fetchMe: async () => {

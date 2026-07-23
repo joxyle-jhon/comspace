@@ -12,5 +12,7 @@ storage/logs/*
 storage/framework/views/*
 storage/framework/cache/*
 storage/framework/sessions/*
+bootstrap/cache/*.php
+!bootstrap/cache/.gitignore
 .phpunit.result.cache
 tests
