@@ -15,6 +15,9 @@ Start the server:
 AUTOMATED TESTS (run from backend/)
 ================================================================================
 
+Authentication API (register, login, throttle, logout)
+  php artisan test --filter=AuthApiTest
+
 Property search & browse filters
   php artisan test --filter=PropertySearchApiTest
 
@@ -406,6 +409,7 @@ POST /reviews/{id}/reply         (auth required)
 Run automated tests:
   php artisan test --filter=BookingConflictTest
   php artisan test --filter=HostApiTest
+  php artisan test --filter=AuthApiTest
 
 
 ================================================================================
