@@ -19,6 +19,8 @@ interface AuthState {
   register: (data: Record<string, unknown>) => Promise<void>
   logout: () => Promise<void>
   fetchMe: () => Promise<void>
+  setAuth: (user: User, token: string) => void
+  setUser: (user: User) => void
   initialize: () => void
 }
 
@@ -90,5 +92,16 @@ export const useAuthStore = create<AuthState>((set) => ({
     } catch (err) {
       console.error('Failed to fetch user', err)
     }
+  },
+
+  setAuth: (user, token) => {
+    localStorage.setItem('comspace_token', token)
+    localStorage.setItem('comspace_user', JSON.stringify(user))
+    set({ user, token })
+  },
+
+  setUser: (user) => {
+    localStorage.setItem('comspace_user', JSON.stringify(user))
+    set({ user })
   },
 }))

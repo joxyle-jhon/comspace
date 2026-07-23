@@ -152,9 +152,9 @@ STATUS: PARTIAL
     - Name, email, password, confirm password, role fields
     - Labelled inputs (A11Y compliance)
     - On success: store token, redirect to /
-[ ] Add "Continue with Google" OAuth button to login & register pages
+[x] Add "Continue with Google" OAuth button to login & register pages
     - Redirects to GET /api/auth/google/redirect
-    - File: app/auth/login/page.tsx, app/auth/register/page.tsx
+    - File: app/auth/login/page.tsx, app/auth/register/page.tsx, app/auth/callback/page.tsx
 [ ] Build /app/auth/layout.tsx
     - Centered card layout with branding on the left (split screen)
 
