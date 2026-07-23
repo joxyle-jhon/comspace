@@ -49,6 +49,7 @@ class PropertyResource extends JsonResource
             'images' => PropertyImageResource::collection($this->whenLoaded('images')),
             'amenities' => AmenityResource::collection($this->whenLoaded('amenities')),
             'reviews' => ReviewResource::collection($this->whenLoaded('reviews')),
+            'availability_blocks' => AvailabilityBlockResource::collection($this->whenLoaded('availabilityBlocks')),
             'created_at' => $this->created_at->toISOString(),
             'updated_at' => $this->updated_at->toISOString(),
         ];

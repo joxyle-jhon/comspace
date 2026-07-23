@@ -39,6 +39,9 @@ Booking conflict / stay rules
 Booking API (create, confirm, cancel, auth guard)
   php artisan test --filter=BookingApiTest
 
+Property availability blocks
+  php artisan test --filter=AvailabilityBlockTest
+
 Host dashboard stats
   php artisan test --filter=HostApiTest
 
@@ -406,9 +409,13 @@ POST /bookings/{id}/reviews      (auth required)
 POST /reviews/{id}/reply         (auth required)
   host_reply
 
+POST /properties/{id}/availability   (auth required, host only)
+  blocked_from, blocked_to, reason (optional string)
+
 Run automated tests:
   php artisan test --filter=BookingConflictTest
   php artisan test --filter=HostApiTest
+  php artisan test --filter=AvailabilityBlockTest
   php artisan test --filter=AuthApiTest
 
 
