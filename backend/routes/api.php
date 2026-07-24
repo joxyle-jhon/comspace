@@ -29,6 +29,10 @@ Route::get('/properties/{property}/reviews', [ReviewController::class, 'index'])
 // Price preview (public — guests check price before logging in)
 Route::get('/properties/{property}/price-preview', [PropertyController::class, 'pricePreview']);
 
+// Stripe Webhook (public)
+Route::post('/webhooks/stripe', [App\Http\Controllers\Api\StripeWebhookController::class, 'handle']);
+
+
 // ─── Authenticated Routes ───────────────────────────────────────────────────
 
 Route::middleware('auth:sanctum')->group(function () {

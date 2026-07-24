@@ -128,9 +128,9 @@ STATUS: <span style="color: #16a34a">DONE</span>
     - File: backend/routes/api.php, backend/app/Http/Controllers/Api/AvailabilityController.php
 
 BRANCH: feature/backend-stripe-webhook
-PRIORITY: 5
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Add POST /api/webhooks/stripe endpoint
+[x] Add POST /api/webhooks/stripe endpoint
     - Verify Stripe signature using STRIPE_WEBHOOK_SECRET
     - Handle payment_intent.succeeded to mark booking as confirmed/paid
     - Handle payment_intent.payment_failed to update booking status
