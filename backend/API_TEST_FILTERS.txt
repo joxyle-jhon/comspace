@@ -45,6 +45,9 @@ Property availability blocks
 Host dashboard stats
   php artisan test --filter=HostApiTest
 
+Stripe webhook events (succeeded, failed, signature verification)
+  php artisan test --filter=StripeWebhookTest
+
 Full suite (everything)
   php artisan test
 
@@ -412,11 +415,16 @@ POST /reviews/{id}/reply         (auth required)
 POST /properties/{id}/availability   (auth required, host only)
   blocked_from, blocked_to, reason (optional string)
 
+POST /webhooks/stripe                (public webhook, requires signature verification)
+  Stripe payload with event type payment_intent.succeeded or payment_intent.payment_failed
+
 Run automated tests:
   php artisan test --filter=BookingConflictTest
   php artisan test --filter=HostApiTest
   php artisan test --filter=AvailabilityBlockTest
   php artisan test --filter=AuthApiTest
+  php artisan test --filter=StripeWebhookTest
+
 
 
 ================================================================================
