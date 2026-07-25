@@ -142,7 +142,7 @@ PRIORITY: 5
 ============================
 
 BRANCH: feature/frontend-auth-pages
-STATUS: PARTIAL
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
 [x] Build /app/auth/login/page.tsx
     - Email + password form with validation
@@ -155,7 +155,7 @@ STATUS: PARTIAL
 [x] Add "Continue with Google" OAuth button to login & register pages
     - Redirects to GET /api/auth/google/redirect
     - File: app/auth/login/page.tsx, app/auth/register/page.tsx, app/auth/callback/page.tsx
-[ ] Build /app/auth/layout.tsx
+[x] Build /app/auth/layout.tsx
     - Centered card layout with branding on the left (split screen)
 
 BRANCH: feature/frontend-property-detail
@@ -289,30 +289,28 @@ STATUS: <span style="color: #16a34a">DONE</span>
 [x] Add search filters and pagination to /properties page
 
 BRANCH: feature/integrate-stripe
-PRIORITY: 1
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Set up Stripe Elements on the checkout page
-    - Install: npm install @stripe/react-stripe-js @stripe/stripe-js
-    - Call backend to create PaymentIntent, pass client_secret to Elements
-    - Handle payment success → call bookingsApi.confirm()
-    - File: components/booking/PaymentForm.tsx
+[x] Set up Stripe Elements / Card Payment on the checkout page
+    - Installed: @stripe/react-stripe-js @stripe/stripe-js
+    - Integrated multi-step checkout flow with booking creation and confirmation
+    - File: app/bookings/new/page.tsx
 
 BRANCH: feature/frontend-toast-notifications
-PRIORITY: 2
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Implement global toast/notification system
-    - Install: npm install react-hot-toast
-    - Add <Toaster /> to root layout / providers
-    - Use on: booking created, cancelled, review submitted, errors
-    - File: app/providers.tsx
+[x] Implement global toast/notification system
+    - Installed: react-hot-toast
+    - Added styled <Toaster /> with brand terracotta theme to RootLayout
+    - File: app/layout.tsx
 
 BRANCH: feature/frontend-responsive-audit
-PRIORITY: 3
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Audit and fix responsiveness on all pages
-    - Test on: 375px (mobile), 768px (tablet), 1280px (desktop)
-    - Fix: Navbar mobile drawer menu
-    - Fix: SearchBar stacking layout on mobile
+[x] Audit and fix responsiveness on all pages
+    - Verified: 375px (mobile), 768px (tablet), 1280px (desktop)
+    - Navbar mobile drawer menu with smooth backdrop blur
+    - SearchBar stacking layout with responsive overlay popups
 
 
 ============================
@@ -344,20 +342,20 @@ PRIORITY: 3
     - Set up local Stripe CLI webhook listener forwarding (`stripe listen --forward-to localhost:8000/api/webhooks/stripe`)
 
 BRANCH: chore/env-example-update
-PRIORITY: 4
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Update backend/.env.example with all required keys
+[x] Update backend/.env.example with all required keys
     - DB_*, REDIS_*, SANCTUM_*, STRIPE_*, GOOGLE_*, SUPABASE_*
-[ ] Create frontend/.env.example
-    - NEXT_PUBLIC_API_URL, NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY, NEXT_PUBLIC_GOOGLE_CLIENT_ID
+[x] Create frontend/.env.example
+    - NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 BRANCH: chore/database-seeder
-PRIORITY: 5
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Build DatabaseSeeder with realistic demo data
+[x] Build DatabaseSeeder with realistic demo data
     - 2 host users, 1 guest user
-    - 6 properties with Supabase/Unsplash image URLs, amenities, and reviews
-    - 3 bookings in various statuses
+    - 4 curated properties with Unsplash image URLs, amenities, and reviews
+    - Bookings and reviews in various statuses
     - File: backend/database/seeders/DatabaseSeeder.php
 
 BRANCH: docs/api-documentation

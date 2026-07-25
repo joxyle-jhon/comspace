@@ -65,15 +65,12 @@ export default function RegisterPage() {
   }
 
   return (
-    <>
-      <Navbar />
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 py-24 px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="max-w-md w-full bg-white rounded-3xl border border-slate-200/50 shadow-xl overflow-hidden p-8 sm:p-10 space-y-6"
-        >
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="w-full bg-white rounded-3xl border border-slate-200/80 shadow-xl p-8 sm:p-10 space-y-6"
+    >
           <div className="text-center space-y-2">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-light/35 text-brand-primary text-[10px] font-extrabold uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5" />
@@ -255,7 +252,5 @@ export default function RegisterPage() {
             </Link>
           </p>
         </motion.div>
-      </div>
-    </>
   )
 }

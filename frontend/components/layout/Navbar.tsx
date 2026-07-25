@@ -25,15 +25,15 @@ export default function Navbar() {
   }, [initialize])
 
   return (
-    <nav
-      className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-transparent',
-        scrolled
-          ? 'glass shadow-sm py-3.5 border-slate-200/60'
-          : 'bg-transparent py-5'
-      )}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="fixed top-0 left-0 right-0 z-50 px-4 pt-4 pointer-events-none">
+      <nav
+        className={cn(
+          'pointer-events-auto mx-auto max-w-6xl transition-all duration-500 rounded-full border',
+          scrolled
+            ? 'bg-white/85 backdrop-blur-xl border-slate-200/80 shadow-lg shadow-slate-900/5 py-2.5 px-6'
+            : 'bg-white/60 backdrop-blur-md border-slate-200/50 shadow-sm py-3 px-6'
+        )}
+      >
         <div className="flex items-center justify-between">
           {/* Brand Logo */}
           <Logo size="md" />
@@ -42,20 +42,20 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-8">
             <Link
               href="/properties"
-              className="text-sm font-semibold text-slate-700 hover:text-[#FF5A1F] transition-colors"
+              className="text-xs font-bold uppercase tracking-wider text-slate-700 hover:text-[#FF5A1F] transition-colors"
             >
               Find Stays
             </Link>
             <Link
               href="/about"
-              className="text-sm font-semibold text-slate-700 hover:text-[#FF5A1F] transition-colors"
+              className="text-xs font-bold uppercase tracking-wider text-slate-700 hover:text-[#FF5A1F] transition-colors"
             >
               Why Comspace
             </Link>
             {user?.role === 'host' ? (
               <Link
                 href="/host/dashboard"
-                className="text-sm font-bold text-[#FF5A1F] hover:opacity-80 transition-opacity flex items-center gap-1.5"
+                className="text-xs font-extrabold uppercase tracking-wider text-[#FF5A1F] hover:opacity-80 transition-opacity flex items-center gap-1.5"
               >
                 <Sparkles className="w-4 h-4" />
                 Host Console
@@ -63,7 +63,7 @@ export default function Navbar() {
             ) : (
               <Link
                 href="/host/become"
-                className="text-xs font-bold uppercase tracking-wider text-[#FF5A1F] bg-[#FFF0EB] border border-[#FF5A1F]/20 hover:bg-[#FF5A1F] hover:text-white px-4 py-2 rounded-full transition-all flex items-center gap-1.5"
+                className="text-xs font-extrabold uppercase tracking-wider text-[#FF5A1F] bg-[#FFF0EB] border border-[#FF5A1F]/20 hover:bg-[#FF5A1F] hover:text-white px-4 py-1.5 rounded-full transition-all flex items-center gap-1.5"
               >
                 <PlusCircle className="w-4 h-4" />
                 Host Your Space
@@ -186,7 +186,6 @@ export default function Navbar() {
             </button>
           </div>
         </div>
-      </div>
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
@@ -282,6 +281,8 @@ export default function Navbar() {
           )}
         </div>
       )}
-    </nav>
+      </nav>
+    </header>
   )
 }
+
