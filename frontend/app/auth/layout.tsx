@@ -1,6 +1,5 @@
 import React from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import Logo from '@/components/layout/Logo'
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -21,9 +20,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
           {/* Top Logo */}
           <div className="relative z-10">
-            <Link href="/" className="inline-block">
-              <Logo size="lg" />
-            </Link>
+            <Logo size="lg" />
           </div>
 
           {/* Center Editorial Quote */}
