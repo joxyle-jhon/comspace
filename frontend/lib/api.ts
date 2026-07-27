@@ -8,8 +8,7 @@ export function getGoogleOAuthRedirectUrl(): string {
   return `${API_URL}/auth/google/redirect`
 }
 
-const resolveHttpAdapter = (config: InternalAxiosRequestConfig) =>
-  axios.getAdapter(config.adapter ?? ['xhr', 'http', 'fetch'])
+const httpAdapter = axios.getAdapter(['xhr', 'http', 'fetch'])
 
 export const api = axios.create({
   baseURL: API_URL,
@@ -246,10 +245,10 @@ const customAdapter: AxiosAdapter = async (config) => {
     return mockResponse({ success: true, message: 'Mock action succeeded' })
   }
 
-  const adapter = resolveHttpAdapter(config)
+  const requestConfig: InternalAxiosRequestConfig = { ...config, adapter: httpAdapter }
 
   try {
-    return await adapter(config)
+    return await httpAdapter(requestConfig)
   } catch (err) {
     const error = err as { code?: string; message?: string }
     if (error.code === 'ERR_NETWORK' || error.message?.includes('Network Error')) {
