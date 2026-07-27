@@ -36,14 +36,15 @@ STATUS: <span style="color: #16a34a">DONE</span>
     - File: backend/app/Http/Controllers/Api/*.php
 
 BRANCH: feature/backend-google-oauth
-PRIORITY: 1
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Implement Google OAuth authentication with Laravel Socialite
+[x] Implement Google OAuth authentication with Laravel Socialite
     - Install package: composer require laravel/socialite
     - Add GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI to .env
     - Create GET /api/auth/google/redirect endpoint
     - Create GET /api/auth/google/callback endpoint
     - Find or create user by google_id / email and return Sanctum plainTextToken
+    - Covered by GoogleOAuthApiTest and documented in API_TEST_FILTERS.txt
     - File: backend/config/services.php, backend/app/Http/Controllers/Api/AuthController.php
 
 BRANCH: test/backend-auth-api

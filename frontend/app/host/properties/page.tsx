@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Plus, Edit2, Trash2, MapPin, Eye, Star, EyeOff } from 'lucide-react'
 import { propertiesApi, Property } from '@/lib/services'
-import { formatCents } from '@/lib/utils'
+import { formatCents, resolveMediaUrl } from '@/lib/utils'
 
 export default function HostPropertiesPage() {
   const [properties, setProperties] = useState<Property[]>([])
@@ -149,7 +149,7 @@ export default function HostPropertiesPage() {
                 <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100 shrink-0">
                   {coverImage ? (
                     <Image
-                      src={coverImage.url}
+                      src={resolveMediaUrl(coverImage.url)}
                       alt={coverImage.caption || property.title}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"

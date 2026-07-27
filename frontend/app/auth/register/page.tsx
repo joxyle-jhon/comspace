@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { UserPlus, Sparkles, Mail, Lock, User as UserIcon, Shield, Briefcase } from 'lucide-react'
+import { UserPlus, Sparkles, Mail, Lock, User as UserIcon, Shield, Briefcase, Loader2 } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
+import { getGoogleOAuthRedirectUrl } from '@/lib/api'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -17,6 +18,7 @@ export default function RegisterPage() {
     role: 'guest' as 'guest' | 'host',
   })
   const [localError, setLocalError] = useState<string | null>(null)
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
 
   useEffect(() => {
     initialize()
@@ -59,7 +61,8 @@ export default function RegisterPage() {
   }
 
   const handleGoogleLogin = () => {
-    router.push('/auth/google')
+    setIsGoogleLoading(true)
+    window.location.href = getGoogleOAuthRedirectUrl()
   }
 
   const handleDevBypass = (role: 'guest' | 'host') => {
@@ -227,8 +230,16 @@ export default function RegisterPage() {
           <button
             type="button"
             onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-3 py-3.5 px-4 bg-white border border-slate-200 rounded-full text-xs font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 shadow-sm transition-all hover:scale-[1.01]"
+            disabled={isGoogleLoading}
+            className="w-full flex items-center justify-center gap-3 py-3.5 px-4 bg-white border border-slate-200 rounded-full text-xs font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 shadow-sm transition-all hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60"
           >
+            {isGoogleLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin text-brand-primary motion-reduce:animate-none" />
+                Redirecting to Google...
+              </>
+            ) : (
+              <>
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path
                 fill="#4285F4"
@@ -248,6 +259,8 @@ export default function RegisterPage() {
               />
             </svg>
             Continue with Google
+              </>
+            )}
           </button>
 
           {/* Developer Sandbox */}

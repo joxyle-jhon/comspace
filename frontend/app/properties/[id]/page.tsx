@@ -20,7 +20,7 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import BookingWidget from '@/components/booking/BookingWidget'
 import { propertiesApi, type Property, type Review } from '@/lib/services'
-import { pluralize } from '@/lib/utils'
+import { pluralize, resolveMediaUrl } from '@/lib/utils'
 
 const FALLBACK_IMAGES = [
   'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
@@ -80,7 +80,7 @@ export default function PropertyDetailPage({ params }: PageProps) {
   // Gallery Photos Assembly
   const images =
     property?.images && property.images.length > 0
-      ? property.images.map((img) => img.url)
+      ? property.images.map((img) => resolveMediaUrl(img.url))
       : FALLBACK_IMAGES
 
   const galleryImages = images.slice(0, 5)

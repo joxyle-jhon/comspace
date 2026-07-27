@@ -15,7 +15,7 @@ import {
 } from 'lucide-react'
 import { AxiosError } from 'axios'
 import { api } from '@/lib/api'
-import { formatCents, pluralize } from '@/lib/utils'
+import { formatCents, pluralize, resolveMediaUrl } from '@/lib/utils'
 import type { Property, PropertyAmenity, PropertyReview } from '@/types/property'
 
 interface PropertyDetailModalProps {
@@ -214,7 +214,7 @@ export default function PropertyDetailModal({ propertyId, onClose }: PropertyDet
                         }`}
                       >
                         <Image
-                          src={image.url}
+                          src={resolveMediaUrl(image.url)}
                           alt={image.caption || `Photo ${index + 1}`}
                           fill
                           className="object-cover"

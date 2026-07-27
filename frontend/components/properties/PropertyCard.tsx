@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { MapPin, Users, Star, Heart, Wifi, Sparkles } from 'lucide-react'
-import { formatCents, pluralize } from '@/lib/utils'
+import { formatCents, pluralize, resolveMediaUrl } from '@/lib/utils'
 import type { Property } from '@/types/property'
 import PropertyDetailModal from './PropertyDetailModal'
 
@@ -43,7 +43,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-slate-100">
             {coverImage ? (
               <Image
-                src={coverImage.url}
+                src={resolveMediaUrl(coverImage.url)}
                 alt={coverImage.caption || property.title}
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
