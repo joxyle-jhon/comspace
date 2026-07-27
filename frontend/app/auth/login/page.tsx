@@ -1,24 +1,34 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { LogIn, Sparkles, Mail, Lock } from 'lucide-react'
+import { Loader2, LogIn, Sparkles, Mail, Lock } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
+import { getGoogleOAuthRedirectUrl } from '@/lib/api'
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { user, login, setAuth, initialize, isLoading, error } = useAuthStore()
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   })
   const [localError, setLocalError] = useState<string | null>(null)
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
 
   useEffect(() => {
     initialize()
   }, [initialize])
+
+  useEffect(() => {
+    const oauthError = searchParams.get('error')
+    if (oauthError) {
+      setLocalError(decodeURIComponent(oauthError))
+    }
+  }, [searchParams])
 
   useEffect(() => {
     if (user) {
@@ -48,7 +58,8 @@ export default function LoginPage() {
   }
 
   const handleGoogleLogin = () => {
-    router.push('/auth/google')
+    setIsGoogleLoading(true)
+    window.location.href = getGoogleOAuthRedirectUrl()
   }
 
   const handleDevBypass = (role: 'guest' | 'host') => {
@@ -160,8 +171,16 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-3 py-3.5 px-4 bg-white border border-slate-200 rounded-full text-xs font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 shadow-sm transition-all hover:scale-[1.01]"
+            disabled={isGoogleLoading}
+            className="w-full flex items-center justify-center gap-3 py-3.5 px-4 bg-white border border-slate-200 rounded-full text-xs font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-300 shadow-sm transition-all hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60"
           >
+            {isGoogleLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin text-brand-primary motion-reduce:animate-none" />
+                Redirecting to Google...
+              </>
+            ) : (
+              <>
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path
                 fill="#4285F4"
@@ -181,6 +200,8 @@ export default function LoginPage() {
               />
             </svg>
             Continue with Google
+              </>
+            )}
           </button>
 
           {/* Developer Sandbox */}
@@ -220,5 +241,13 @@ export default function LoginPage() {
             </Link>
           </p>
         </motion.div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   )
 }
