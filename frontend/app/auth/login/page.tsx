@@ -6,11 +6,10 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { LogIn, Sparkles, Mail, Lock } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
-import Navbar from '@/components/layout/Navbar'
 
 export default function LoginPage() {
   const router = useRouter()
-  const { user, login, initialize, isLoading, error } = useAuthStore()
+  const { user, login, setAuth, initialize, isLoading, error } = useAuthStore()
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -49,8 +48,17 @@ export default function LoginPage() {
   }
 
   const handleGoogleLogin = () => {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
-    window.location.href = `${backendUrl}/auth/google/redirect`
+    router.push('/auth/google')
+  }
+
+  const handleDevBypass = (role: 'guest' | 'host') => {
+    const searchParams = new URLSearchParams(window.location.search)
+    const redirect = searchParams.get('redirect') || '/'
+    const mockUser = role === 'host'
+      ? { id: 2, name: 'John Host', email: 'john@example.com', role: 'host' as const, host_since: '2023-01-15' }
+      : { id: 1, name: 'Jane Guest', email: 'jane@example.com', role: 'guest' as const, host_since: null }
+    setAuth(mockUser, `mock_google_token_${role}`)
+    router.push(redirect)
   }
 
   return (
@@ -174,6 +182,33 @@ export default function LoginPage() {
             </svg>
             Continue with Google
           </button>
+
+          {/* Developer Sandbox */}
+          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+            <div className="flex items-center gap-1.5 text-slate-500">
+              <Sparkles className="w-3.5 h-3.5 text-brand-primary" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">Developer Sandbox</span>
+            </div>
+            <p className="text-slate-400 text-[10px] leading-relaxed">
+              Bypass auth to inspect host dashboards, bookings, and other components with pre-configured mock states.
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => handleDevBypass('host')}
+                className="py-2 px-3 bg-white border border-slate-200 rounded-xl text-[10px] font-bold text-slate-700 hover:bg-slate-100 hover:border-slate-300 shadow-sm transition-all"
+              >
+                Mock Host
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDevBypass('guest')}
+                className="py-2 px-3 bg-white border border-slate-200 rounded-xl text-[10px] font-bold text-slate-700 hover:bg-slate-100 hover:border-slate-300 shadow-sm transition-all"
+              >
+                Mock Guest
+              </button>
+            </div>
+          </div>
 
           <p className="text-center text-xs text-slate-400">
             Don&apos;t have an account?{' '}

@@ -24,6 +24,16 @@ interface AuthState {
   initialize: () => void
 }
 
+const setTokenCookie = (token: string | null) => {
+  if (typeof window !== 'undefined') {
+    if (token) {
+      document.cookie = `comspace_token=${token}; path=/; max-age=31536000; SameSite=Lax`
+    } else {
+      document.cookie = 'comspace_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/'
+    }
+  }
+}
+
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   token: null,
@@ -36,6 +46,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       const userStr = localStorage.getItem('comspace_user')
       if (token && userStr) {
         set({ token, user: JSON.parse(userStr) })
+        setTokenCookie(token)
       }
     }
   },
@@ -47,6 +58,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       const { user, token } = res.data
       localStorage.setItem('comspace_token', token)
       localStorage.setItem('comspace_user', JSON.stringify(user))
+      setTokenCookie(token)
       set({ user, token, isLoading: false })
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>
@@ -62,6 +74,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       const { user, token } = res.data
       localStorage.setItem('comspace_token', token)
       localStorage.setItem('comspace_user', JSON.stringify(user))
+      setTokenCookie(token)
       set({ user, token, isLoading: false })
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>
@@ -79,6 +92,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     } finally {
       localStorage.removeItem('comspace_token')
       localStorage.removeItem('comspace_user')
+      setTokenCookie(null)
       set({ user: null, token: null, isLoading: false })
     }
   },
@@ -97,6 +111,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   setAuth: (user, token) => {
     localStorage.setItem('comspace_token', token)
     localStorage.setItem('comspace_user', JSON.stringify(user))
+    setTokenCookie(token)
     set({ user, token })
   },
 
