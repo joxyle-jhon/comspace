@@ -1,6 +1,15 @@
-import axios, { AxiosAdapter } from 'axios'
+import axios, { AxiosAdapter, InternalAxiosRequestConfig } from 'axios'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
+
+export { API_URL }
+
+export function getGoogleOAuthRedirectUrl(): string {
+  return `${API_URL}/auth/google/redirect`
+}
+
+const resolveHttpAdapter = (config: InternalAxiosRequestConfig) =>
+  axios.getAdapter(config.adapter ?? ['xhr', 'http', 'fetch'])
 
 export const api = axios.create({
   baseURL: API_URL,
@@ -193,7 +202,9 @@ const customAdapter: AxiosAdapter = async (config) => {
     const url = config.url || ''
     
     if (url.includes('/auth/me')) {
-      let user = { id: 2, name: 'John Host', email: 'john@example.com', role: 'host', host_since: '2023-01-15' }
+      let user: { id: number; name: string; email: string; role: string; host_since: string | null } = {
+        id: 2, name: 'John Host', email: 'john@example.com', role: 'host', host_since: '2023-01-15',
+      }
       if (token.includes('guest')) {
         user = { id: 1, name: 'Jane Guest', email: 'jane@example.com', role: 'guest', host_since: null }
       }
@@ -235,13 +246,10 @@ const customAdapter: AxiosAdapter = async (config) => {
     return mockResponse({ success: true, message: 'Mock action succeeded' })
   }
 
-  const originalAdapter = axios.defaults.adapter
-  if (!originalAdapter) {
-    throw new Error('Default axios adapter is not defined')
-  }
+  const adapter = resolveHttpAdapter(config)
 
   try {
-    return await originalAdapter(config)
+    return await adapter(config)
   } catch (err) {
     const error = err as { code?: string; message?: string }
     if (error.code === 'ERR_NETWORK' || error.message?.includes('Network Error')) {
