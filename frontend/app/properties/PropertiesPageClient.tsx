@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AxiosError } from 'axios'
-import { SlidersHorizontal } from 'lucide-react'
+import { Loader2, SlidersHorizontal } from 'lucide-react'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import PropertyCard, { Property } from '@/components/properties/PropertyCard'
@@ -112,6 +112,8 @@ export function PropertiesPageClient() {
 
   useEffect(() => {
     let cancelled = false
+    setIsLoading(true)
+    setError(null)
 
     api
       .get(`/properties${queryString ? `?${queryString}` : ''}`)
@@ -156,7 +158,6 @@ export function PropertiesPageClient() {
   }, [queryString])
 
   const navigate = (params: URLSearchParams) => {
-    setIsLoading(true)
     router.push(`/properties${params.size ? `?${params.toString()}` : ''}`)
   }
 
@@ -329,7 +330,7 @@ export function PropertiesPageClient() {
                 </div>
               </div>
 
-              {isLoading ? (
+              {isLoading && !result ? (
                 <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
                   {Array.from({ length: 6 }, (_, index) => (
                     <PropertyCardSkeleton key={index} />
@@ -341,10 +342,30 @@ export function PropertiesPageClient() {
                 </div>
               ) : result && result.data.length > 0 ? (
                 <>
-                  <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                    {result.data.map((property) => (
-                      <PropertyCard key={property.id} property={property} />
-                    ))}
+                  <div className="relative">
+                    <div
+                      className={`grid gap-6 sm:grid-cols-2 xl:grid-cols-3 transition-opacity ${
+                        isLoading ? 'pointer-events-none opacity-40' : ''
+                      }`}
+                      aria-busy={isLoading}
+                    >
+                      {result.data.map((property) => (
+                        <PropertyCard key={property.id} property={property} />
+                      ))}
+                    </div>
+
+                    {isLoading && (
+                      <div
+                        className="absolute inset-0 flex items-center justify-center"
+                        role="status"
+                        aria-live="polite"
+                      >
+                        <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-md">
+                          <Loader2 className="h-4 w-4 animate-spin text-brand-primary motion-reduce:animate-none" />
+                          Loading next page...
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {result.meta.last_page > 1 && (
@@ -353,9 +374,10 @@ export function PropertiesPageClient() {
                         <button
                           key={page}
                           type="button"
+                          disabled={isLoading}
                           onClick={() => changePage(page)}
                           aria-current={page === result.meta.current_page ? 'page' : undefined}
-                          className={`h-10 min-w-10 rounded-full px-3 text-xs font-bold transition-all ${
+                          className={`h-10 min-w-10 rounded-full px-3 text-xs font-bold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
                             page === result.meta.current_page
                               ? 'gradient-bg text-white shadow-sm'
                               : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
