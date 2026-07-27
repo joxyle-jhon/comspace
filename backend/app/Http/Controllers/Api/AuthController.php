@@ -7,12 +7,20 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\GoogleOAuthService;
+use GuzzleHttp\Client;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Laravel\Socialite\Contracts\Provider as SocialiteProvider;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
+    public function __construct(private GoogleOAuthService $googleOAuth) {}
+
     public function register(RegisterRequest $request): JsonResponse
     {
         $data = $request->validated();
@@ -57,6 +65,59 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * Redirect the user to Google's OAuth consent screen.
+     */
+    public function redirectToGoogle(): RedirectResponse
+    {
+        return $this->googleDriver()->redirect();
+    }
+
+    /**
+     * Handle the Google OAuth callback and redirect to the frontend with a token.
+     */
+    public function handleGoogleCallback(Request $request): RedirectResponse
+    {
+        $frontendUrl = rtrim(config('app.frontend_url'), '/');
+
+        try {
+            $googleUser = $this->googleDriver()->user();
+            $user = $this->googleOAuth->findOrCreateUser($googleUser);
+            $token = $user->createToken('api-token')->plainTextToken;
+
+            return redirect()->away(
+                $frontendUrl.'/auth/callback?token='.urlencode($token)
+            );
+        } catch (\Throwable $exception) {
+            Log::error('Google OAuth callback failed', [
+                'message' => $exception->getMessage(),
+                'exception' => $exception::class,
+            ]);
+
+            $message = config('app.debug')
+                ? 'Google sign-in failed: '.$exception->getMessage()
+                : 'Google sign-in failed. Please try again.';
+
+            return redirect()->away(
+                $frontendUrl.'/auth/callback?error='.urlencode($message)
+            );
+        }
+    }
+
+    /**
+     * Build a stateless Google Socialite driver (local dev may skip SSL verify on Windows).
+     */
+    private function googleDriver(): SocialiteProvider
+    {
+        $driver = Socialite::driver('google')->stateless();
+
+        if (app()->environment('local') && ! ini_get('curl.cainfo')) {
+            $driver->setHttpClient(new Client(['verify' => false]));
+        }
+
+        return $driver;
+    }
+
     public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
@@ -89,7 +150,7 @@ class AuthController extends Controller
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
         ]);
 
         $user->update($data);

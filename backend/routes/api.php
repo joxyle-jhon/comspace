@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\HostController;
 use App\Http\Controllers\Api\PropertyController;
 use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\StripeWebhookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,6 +20,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login'])
     ->middleware('throttle:5,1');
+Route::get('/auth/google/redirect', [AuthController::class, 'redirectToGoogle']);
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
 // Properties — public browsing
 Route::get('/properties', [PropertyController::class, 'index']);
@@ -30,8 +33,7 @@ Route::get('/properties/{property}/reviews', [ReviewController::class, 'index'])
 Route::get('/properties/{property}/price-preview', [PropertyController::class, 'pricePreview']);
 
 // Stripe Webhook (public)
-Route::post('/webhooks/stripe', [App\Http\Controllers\Api\StripeWebhookController::class, 'handle']);
-
+Route::post('/webhooks/stripe', [StripeWebhookController::class, 'handle']);
 
 // ─── Authenticated Routes ───────────────────────────────────────────────────
 
