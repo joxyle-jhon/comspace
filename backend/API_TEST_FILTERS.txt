@@ -48,6 +48,9 @@ Host dashboard stats
 Stripe webhook events (succeeded, failed, signature verification)
   php artisan test --filter=StripeWebhookTest
 
+Google OAuth (redirect, callback, account linking, error handling)
+  php artisan test --filter=GoogleOAuthApiTest
+
 Full suite (everything)
   php artisan test
 
@@ -388,7 +391,56 @@ Invalid cases to try
 
 
 ================================================================================
-5. Other endpoints with inputs (no query filters)
+5. GET /auth/google — Google OAuth sign-in
+================================================================================
+
+Endpoints:
+  GET /api/auth/google/redirect   Browser redirect to Google consent screen
+  GET /api/auth/google/callback   Google redirects here; Laravel sends user to frontend
+
+Auth:
+  Public (browser-based OAuth flow)
+
+Backend env (backend/.env):
+  GOOGLE_CLIENT_ID=
+  GOOGLE_CLIENT_SECRET=
+  GOOGLE_REDIRECT_URI=http://127.0.0.1:8000/api/auth/google/callback
+  FRONTEND_URL=http://localhost:3000
+
+Frontend env (frontend/.env.local):
+  NEXT_PUBLIC_API_URL=http://127.0.0.1:8000/api
+
+Google Cloud Console:
+  Authorized redirect URI must match GOOGLE_REDIRECT_URI exactly.
+
+--------------------------------------------------------------------------------
+Manual flow (recommended)
+--------------------------------------------------------------------------------
+
+  1. cd backend && php artisan serve
+  2. cd frontend && npm run dev
+  3. Open http://localhost:3000/auth/login
+  4. Click "Continue with Google"
+  5. Pick a Google account and approve
+  6. Browser lands on /auth/callback?token=... then redirects to /
+
+Direct redirect test (browser only — starts OAuth):
+  http://127.0.0.1:8000/api/auth/google/redirect
+
+Do NOT open /api/auth/google/callback directly without completing Google first.
+
+Success redirect (backend → frontend):
+  http://localhost:3000/auth/callback?token=<sanctum_plain_text_token>
+
+Error redirect (backend → frontend):
+  http://localhost:3000/auth/callback?error=<message>
+
+Run automated tests:
+  php artisan test --filter=GoogleOAuthApiTest
+
+
+================================================================================
+6. Other endpoints with inputs (no query filters)
 ================================================================================
 
 POST /auth/register
@@ -428,7 +480,7 @@ Run automated tests:
 
 
 ================================================================================
-6. Quick setup for manual testing
+7. Quick setup for manual testing
 ================================================================================
 
 One-time storage link:
