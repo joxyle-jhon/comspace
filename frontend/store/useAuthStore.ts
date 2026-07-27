@@ -98,13 +98,18 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   fetchMe: async () => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('comspace_token') : null
+    if (!token) return
+
     try {
       const res = await api.get('/auth/me')
       const user = res.data
       localStorage.setItem('comspace_user', JSON.stringify(user))
-      set({ user })
+      setTokenCookie(token)
+      set({ user, token })
     } catch (err) {
       console.error('Failed to fetch user', err)
+      throw err
     }
   },
 
