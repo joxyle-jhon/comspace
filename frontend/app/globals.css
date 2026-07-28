@@ -3,28 +3,51 @@
 @theme {
   --font-sans: var(--font-jakarta), var(--font-inter), system-ui, -apple-system, sans-serif;
   --font-heading: var(--font-outfit), system-ui, -apple-system, sans-serif;
-  
+
   --color-brand-primary: #FF5A1F;
   --color-brand-secondary: #FF7A45;
   --color-brand-tertiary: #FFA07A;
   --color-brand-light: #FFF0EB;
   --color-brand-dark: #0F172A;
-  
+
   --animate-float: float 6s ease-in-out infinite;
   --animate-pulse-slow: pulse-slow 6s ease-in-out infinite;
   --animate-shimmer: shimmer 2.5s infinite linear;
 
   @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-8px);
+    }
   }
+
   @keyframes pulse-slow {
-    0%, 100% { opacity: 0.15; transform: scale(1); }
-    50% { opacity: 0.3; transform: scale(1.05); }
+
+    0%,
+    100% {
+      opacity: 0.15;
+      transform: scale(1);
+    }
+
+    50% {
+      opacity: 0.3;
+      transform: scale(1.05);
+    }
   }
+
   @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+    0% {
+      background-position: -200% 0;
+    }
+
+    100% {
+      background-position: 200% 0;
+    }
   }
 }
 
@@ -46,7 +69,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading);
   letter-spacing: -0.025em;
 }
@@ -56,13 +84,16 @@ h1, h2, h3, h4, h5, h6 {
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #E2E8F0;
   border-radius: 9999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #FF5A1F;
 }
@@ -112,6 +143,7 @@ h1, h2, h3, h4, h5, h6 {
 .card-hover {
   transition: transform var(--transition-smooth), box-shadow var(--transition-smooth), border-color var(--transition-smooth);
 }
+
 .card-hover:hover {
   box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08), 0 8px 16px -6px rgba(255, 90, 31, 0.08);
   transform: translateY(-4px);
@@ -129,4 +161,3 @@ h1, h2, h3, h4, h5, h6 {
 .text-balance {
   text-wrap: balance;
 }
-
