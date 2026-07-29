@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import NextImage from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Building2, 
@@ -458,10 +459,12 @@ export default function PropertyForm({ initialData, onSubmit, isSubmitting }: Pr
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
                     {initialData.images.map((img) => (
                       <div key={img.id} className="relative aspect-video rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
-                        <img
+                        <NextImage
                           src={img.url}
                           alt={img.caption || 'Listing photo'}
-                          className="w-full h-full object-cover"
+                          fill
+                          sizes="(max-width: 768px) 33vw, 25vw"
+                          className="object-cover"
                         />
                         {img.is_cover && (
                           <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-brand-primary text-white text-[8px] font-bold uppercase tracking-wider">
@@ -480,10 +483,12 @@ export default function PropertyForm({ initialData, onSubmit, isSubmitting }: Pr
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
                     {filePreviews.map((preview, index) => (
                       <div key={index} className="relative aspect-video rounded-xl overflow-hidden bg-slate-100 border border-slate-200 group">
-                        <img
+                        <NextImage
                           src={preview}
                           alt="Local preview"
-                          className="w-full h-full object-cover"
+                          fill
+                          unoptimized
+                          className="object-cover"
                         />
                         <button
                           type="button"
@@ -661,13 +666,13 @@ export default function PropertyForm({ initialData, onSubmit, isSubmitting }: Pr
                   ) : (
                     <div className="flex flex-wrap gap-2">
                       {initialData?.images?.map((img) => (
-                        <div key={img.id} className="w-12 h-12 rounded-lg overflow-hidden bg-slate-100 border border-slate-200">
-                          <img src={img.url} alt="Listing Photo" className="w-full h-full object-cover" />
+                        <div key={img.id} className="relative w-12 h-12 rounded-lg overflow-hidden bg-slate-100 border border-slate-200">
+                          <NextImage src={img.url} alt="Listing Photo" fill sizes="48px" className="object-cover" />
                         </div>
                       ))}
                       {filePreviews.map((preview, index) => (
-                        <div key={index} className="w-12 h-12 rounded-lg overflow-hidden bg-slate-100 border border-slate-200">
-                          <img src={preview} alt="New upload" className="w-full h-full object-cover" />
+                        <div key={index} className="relative w-12 h-12 rounded-lg overflow-hidden bg-slate-100 border border-slate-200">
+                          <NextImage src={preview} alt="New upload" fill unoptimized className="object-cover" />
                         </div>
                       ))}
                     </div>

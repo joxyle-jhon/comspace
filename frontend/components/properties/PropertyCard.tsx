@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { MapPin, Users, Star, Heart, Wifi, Sparkles } from 'lucide-react'
+import { MapPin, Users, Star, Heart, Sparkles } from 'lucide-react'
 import { formatCents, pluralize, resolveMediaUrl } from '@/lib/utils'
 import type { Property } from '@/types/property'
 import PropertyDetailModal from './PropertyDetailModal'
