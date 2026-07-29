@@ -19,16 +19,19 @@ function LoginForm() {
   const [localError, setLocalError] = useState<string | null>(null)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
 
+  // Sync OAuth error to local state during rendering to prevent cascading render
+  const oauthError = searchParams.get('error')
+  const decodedOauthError = oauthError ? decodeURIComponent(oauthError) : null
+  const [prevOauthError, setPrevOauthError] = useState<string | null>(null)
+
+  if (decodedOauthError !== prevOauthError) {
+    setPrevOauthError(decodedOauthError)
+    setLocalError(decodedOauthError)
+  }
+
   useEffect(() => {
     initialize()
   }, [initialize])
-
-  useEffect(() => {
-    const oauthError = searchParams.get('error')
-    if (oauthError) {
-      setLocalError(decodeURIComponent(oauthError))
-    }
-  }, [searchParams])
 
   useEffect(() => {
     if (user) {

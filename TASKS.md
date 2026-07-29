@@ -360,9 +360,9 @@ STATUS: <span style="color: #16a34a">DONE</span>
     - File: backend/database/seeders/DatabaseSeeder.php
 
 BRANCH: docs/api-documentation
-PRIORITY: 6
+STATUS: <span style="color: #16a34a">DONE</span>
 ------
-[ ] Document all API endpoints in backend/API.md
+[x] Document all API endpoints in backend/API.md
     - Method, URL, Auth required, Request body, Response example
     - Include Google OAuth & Stripe Webhook contracts
 

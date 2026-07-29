@@ -110,10 +110,17 @@ export function PropertiesPageClient() {
     `${searchParams.get('sort') ?? 'created_at'}:${searchParams.get('dir') ?? 'desc'}`,
   )
 
-  useEffect(() => {
-    let cancelled = false
+  // Track previous query string to reset loading/error states in render phase
+  const [prevQueryString, setPrevQueryString] = useState(queryString)
+
+  if (queryString !== prevQueryString) {
+    setPrevQueryString(queryString)
     setIsLoading(true)
     setError(null)
+  }
+
+  useEffect(() => {
+    let cancelled = false
 
     api
       .get(`/properties${queryString ? `?${queryString}` : ''}`)
