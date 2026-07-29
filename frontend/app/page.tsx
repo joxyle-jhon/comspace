@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ArrowRight, Sparkles, ShieldCheck, Wifi, Compass, Star, MapPin, Heart, CheckCircle2, Zap } from 'lucide-react'
+import { ArrowRight, Sparkles, ShieldCheck, Compass, Star, Zap } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { api } from '@/lib/api'

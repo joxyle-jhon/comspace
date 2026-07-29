@@ -1,6 +1,6 @@
 'use client'
 
-import { Sparkles, Building2, Home, TreePine, Waves, Mountain, Laptop, Palmtree } from 'lucide-react'
+import { Sparkles, Building2, Home, TreePine, Mountain, Laptop, Palmtree } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const CATEGORIES = [
