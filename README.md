@@ -1,10 +1,10 @@
-# Comspace 🏡
+# Comspace 
 
 **Comspace** is a modern, full-stack property booking platform (Airbnb-style) built with a focus on editorial nomad luxury design, robust backend architecture, and bulletproof concurrency handling for property reservations.
 
 ---
 
-## 🎨 Design Identity — Warm Editorial & Nomad Luxury
+##  Design Identity — Warm Editorial & Nomad Luxury
 
 Comspace features a custom-crafted design system moving away from generic default UI templates:
 - **Palette:** Warm Terracotta (`#FF5A1F`) primary accents paired with Warm Linen (`#FDFBF9`) backgrounds and refined neutral surface tones.
@@ -14,7 +14,7 @@ Comspace features a custom-crafted design system moving away from generic defaul
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 ### Frontend
 - **Framework:** Next.js 16 (App Router with React 19)
@@ -41,31 +41,31 @@ Comspace features a custom-crafted design system moving away from generic defaul
 
 ---
 
-## ✨ Key Features & Implementation Modules
+##  Key Features & Implementation Modules
 
-### 👤 Authentication & User Management
+###  Authentication & User Management
 - **Token Auth:** Secure registration, login, and token storage via Laravel Sanctum & Zustand.
 - **Security & Rate Limiting:** Login route protected by Laravel `ThrottleRequests` (max 5 attempts/min).
 - **Form Validation:** Dedicated FormRequest classes ensuring email uniqueness and strong passwords.
 - **OAuth Ready:** Google OAuth integration flow ("Continue with Google").
 - **User Profile:** Dedicated profile management page (`/profile`) for updating personal info and passwords.
 
-### 🔍 Property Search & Discovery
+###  Property Search & Discovery
 - **Advanced Filtering:** Query properties by location (ILIKE search), date range, guest count, property type, price range (min/max), amenities, and instant booking availability.
 - **Optimized Queries:** Efficient pagination (12 items/page) with eager loading (`images`, `amenities`, `host`) to eliminate N+1 database queries.
 - **Interactive UI:** Category filter pills, custom accessible dropdowns, and responsive search bar overlays.
 
-### 🏡 Property Detail & Price Preview
+###  Property Detail & Price Preview
 - **Editorial Layout:** 5-photo CSS grid presentation, detailed host information card, and category-grouped amenities list.
 - **Live Price Preview:** Real-time calculation API (`GET /api/properties/{id}/price-preview`) detailing nightly breakdown, subtotal, cleaning fee, service fee, and total in cents.
 - **Booking Widget:** Interactive check-in/check-out date picker with guest count adjustment.
 
-### 💳 Multi-Step Checkout & Bookings
+###  Multi-Step Checkout & Bookings
 - **Checkout Stepper:** 3-step checkout flow (`/bookings/new`): Review Booking → Stripe Elements Payment → Instant Confirmation.
 - **Guest Bookings List:** Comprehensive view (`/bookings`) with status badges (*Pending*, *Confirmed*, *Cancelled*, *Completed*).
 - **Interactive Reviews:** Integrated review modal allowing guests to submit 1-5 star ratings alongside sub-ratings (Cleanliness, Accuracy, Communication, Location, Value).
 
-### 📊 Host Dashboard & Property Operations
+###  Host Dashboard & Property Operations
 - **Host Analytics:** Dashboard (`/host/dashboard`) presenting key stats (Total Revenue, Active Bookings, Listed Properties, Average Rating) with Recharts revenue graphs.
 - **Property Management:** Full CRUD operations for host listings (`/host/properties`, `/host/properties/new`, `[id]/edit`).
 - **Availability Date Blocking:** Endpoint (`POST /api/properties/{id}/availability`) allowing hosts to block calendar dates for maintenance or personal use.
@@ -73,7 +73,7 @@ Comspace features a custom-crafted design system moving away from generic defaul
 
 ---
 
-## 🏛️ Architecture & Reliability Highlights
+##  Architecture & Reliability Highlights
 
 1. **Atomic Concurrency Control (Double-Booking Prevention):**
    The core `BookingService` executes PostgreSQL row-level locking (`SELECT FOR NO KEY UPDATE`) within atomic database transactions. This guarantees that concurrent booking requests for overlapping dates on the same property are safely handled without race conditions.
@@ -86,7 +86,7 @@ Comspace features a custom-crafted design system moving away from generic defaul
 
 ---
 
-## 📁 Repository Structure
+##  Repository Structure
 
 ```text
 comspace/
@@ -175,7 +175,7 @@ npm run dev
 
 ---
 
-## 🧪 Testing & Code Standards
+##  Testing & Code Standards
 
 ### Backend Tests
 Execute the Pest test suite to verify booking conflict resolution, API contracts, and authentication:
@@ -199,5 +199,5 @@ npm run lint
 
 ---
 
-## 📄 License
+##  License
 This project is open-source under the [MIT License](LICENSE).
